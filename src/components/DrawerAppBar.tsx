@@ -18,10 +18,6 @@ import Logo from './Logo';
 const drawerWidth = 240;
 const navItems = [
   {
-    name: 'Home',
-    path: '/',
-  },
-  {
     name: 'Clients',
     path: '/clients',
   },
@@ -40,9 +36,7 @@ export default function DrawerAppBar() {
 
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
-      <Typography variant="h6" sx={{ my: 2 }}>
-        <Logo />
-      </Typography>
+      <Logo mobile={true} />
       <Divider />
       <List>
         {navItems.map((item) => (
@@ -71,13 +65,7 @@ export default function DrawerAppBar() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
-          >
-            <Logo />
-          </Typography>
+          <Logo />
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
             {navItems.map((item) => (
               <Link key={item.name} href={item.path} passHref>
