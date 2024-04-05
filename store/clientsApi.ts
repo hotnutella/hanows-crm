@@ -1,21 +1,6 @@
 // features/clients/clientsApi.js
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-
-// Initialize an empty header and populate it with the Supabase key as needed
-const supabaseHeaders = {
-  'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
-  'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''}`,
-};
-
-// Define a base query to handle the Supabase headers
-const baseQuery = fetchBaseQuery({
-  baseUrl: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1`,
-  prepareHeaders: (headers) => {
-    headers.set('apikey', supabaseHeaders.apikey);
-    headers.set('Authorization', supabaseHeaders.Authorization);
-    return headers;
-  },
-});
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { baseQuery } from '../utils/baseQuery';
 
 // Define the api slice
 export const clientsApi = createApi({
@@ -25,7 +10,36 @@ export const clientsApi = createApi({
     getClients: builder.query({
       query: () => ({ url: 'clients', method: 'GET' }),
     }),
+    getClient: builder.query({
+      query: (id) => ({ url: `clients/${id}`, method: 'GET' }),
+    }),
+    createClient: builder.mutation({
+      query: (newClient) => ({
+        url: 'clients',
+        method: 'POST',
+        body: newClient,
+      }),
+    }),
+    updateClient: builder.mutation({
+      query: ({ id, ...update }) => ({
+        url: `clients/${id}`,
+        method: 'PATCH',
+        body: update,
+      }),
+    }),
+    deleteClient: builder.mutation({
+      query: (id) => ({
+        url: `clients/${id}`,
+        method: 'DELETE',
+      }),
+    }),
   }),
 });
 
-export const { useGetClientsQuery } = clientsApi;
+export const { 
+  useGetClientsQuery,
+  useGetClientQuery,
+  useCreateClientMutation,
+  useUpdateClientMutation,
+  useDeleteClientMutation,
+ } = clientsApi;
