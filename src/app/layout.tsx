@@ -1,8 +1,9 @@
 'use client';
 
-import "../../styles/globals.css";
 import { Provider } from "react-redux";
 import { store } from "../../store";
+import DrawerAppBar from "@/components/DrawerAppBar";
+import { Stack } from "@mui/material";
 
 export default function RootLayout({
   children,
@@ -11,9 +12,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <title>Hanows CRM</title>
       <body>
         <Provider store={store}>
-          {children}
+          <Stack direction="column" spacing={8}>
+            <DrawerAppBar />
+            {children}
+          </Stack>
         </Provider>
       </body>
     </html>
