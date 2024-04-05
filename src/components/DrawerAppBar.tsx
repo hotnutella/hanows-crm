@@ -13,6 +13,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Link from 'next/link';
+import Logo from './Logo';
 
 const drawerWidth = 240;
 const navItems = [
@@ -29,7 +30,6 @@ const navItems = [
     path: '/invoices',
   },
 ];
-const logoText = 'Hanows CRM';
 
 export default function DrawerAppBar() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -41,7 +41,7 @@ export default function DrawerAppBar() {
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
       <Typography variant="h6" sx={{ my: 2 }}>
-        {logoText}
+        <Logo />
       </Typography>
       <Divider />
       <List>
@@ -76,7 +76,7 @@ export default function DrawerAppBar() {
             component="div"
             sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
           >
-            {logoText}
+            <Logo />
           </Typography>
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
             {navItems.map((item) => (
