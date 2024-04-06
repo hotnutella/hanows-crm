@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 import { store } from "../../store";
 import DrawerAppBar from "@/components/DrawerAppBar";
 import { Stack } from "@mui/material";
+import Footer from "@/components/Footer";
 
 export default function RootLayout({
   children,
@@ -20,6 +21,7 @@ export default function RootLayout({
             {children}
           </Stack>
         </Provider>
+        <Footer />
       </body>
     </html>
   );
