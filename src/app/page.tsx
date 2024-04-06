@@ -1,19 +1,21 @@
 'use client';
 
+import WidgetCard from "@/components/WidgetCard";
 import { useGetClientsQuery } from "../../store/clientsApi";
-import { Button, Container } from "@mui/material";
+import { Button, Card, Container, Grid, Stack, Typography } from "@mui/material";
+import ClientsWidget from "@/components/widgets/ClientsWidget";
+import InvoicesWidget from "@/components/widgets/InvoicesWidget";
 
 export default function Home() {
-  const { data: clients } = useGetClientsQuery({});
 
   return (
-    <Container>
-      <Button variant="contained" color="primary">
-        Hello World
-      </Button>
-      <div>
-        {JSON.stringify(clients, null, 2)}
-      </div>
-    </Container>
+    <Grid container spacing={2}>
+      <Grid item xs={12} md={6}>
+        <ClientsWidget />
+      </Grid>
+      <Grid item xs={12} md={6}>
+        <InvoicesWidget />
+      </Grid>
+    </Grid>
   );
 }

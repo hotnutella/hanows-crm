@@ -3,7 +3,7 @@
 import { Provider } from "react-redux";
 import { store } from "../../store";
 import DrawerAppBar from "@/components/DrawerAppBar";
-import { Stack } from "@mui/material";
+import { Container, Stack } from "@mui/material";
 import Footer from "@/components/Footer";
 
 export default function RootLayout({
@@ -16,9 +16,11 @@ export default function RootLayout({
       <title>Hanows CRM</title>
       <body>
         <Provider store={store}>
-          <Stack direction="column" spacing={8}>
+          <Stack direction="column" spacing={8} mb={8}>
             <DrawerAppBar />
-            {children}
+              <Container>
+                {children}
+              </Container>
           </Stack>
         </Provider>
         <Footer />
