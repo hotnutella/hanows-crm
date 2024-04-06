@@ -1,7 +1,6 @@
 import React from 'react';
 import { Card, CardContent } from '@mui/material';
 import styles from './WidgetCard.module.css';
-import { useRouter } from 'next/router';
 import Link from 'next/link';
 
 interface WidgetCardProps {

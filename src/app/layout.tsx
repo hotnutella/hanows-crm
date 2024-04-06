@@ -18,7 +18,7 @@ export default function RootLayout({
         <Provider store={store}>
           <Stack direction="column" spacing={8} mb={8}>
             <DrawerAppBar />
-              <Container>
+              <Container sx={{ pt: 8 }}>
                 {children}
               </Container>
           </Stack>
