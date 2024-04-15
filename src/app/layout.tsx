@@ -2,28 +2,29 @@
 
 import { Provider } from "react-redux";
 import { store } from "../../store";
-import DrawerAppBar from "@/components/DrawerAppBar";
-import { Container, Stack } from "@mui/material";
-import Footer from "@/components/Footer";
+import { Grid } from "@mui/material";
 
 export default function RootLayout({
   children,
+  clients
 }: Readonly<{
   children: React.ReactNode;
+  clients: React.ReactNode;
 }>) {
   return (
     <html lang="en">
       <title>Hanows CRM</title>
       <body>
         <Provider store={store}>
-          <Stack direction="column" spacing={8} mb={8}>
-            <DrawerAppBar />
-              <Container sx={{ pt: 8 }}>
-                {children}
-              </Container>
-          </Stack>
+          <Grid container spacing={2}>
+            <Grid item width={400} minWidth={400}>
+              {clients}
+            </Grid>
+            <Grid item xs>
+              {children}
+            </Grid>
+          </Grid>
         </Provider>
-        <Footer />
       </body>
     </html>
   );

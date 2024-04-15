@@ -1,11 +1,19 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQuery } from '../utils/baseQuery';
 
+export interface Client {
+  id: number;
+  name: string;
+  email: string;
+  created_at: Date;
+  additional_info: JSON;
+}
+
 export const clientsApi = createApi({
   reducerPath: 'clientsApi',
   baseQuery: baseQuery,
   endpoints: (builder) => ({
-    getClients: builder.query({
+    getClients: builder.query<Client[], void>({
       query: () => ({ url: 'clients', method: 'GET' }),
     }),
     getClient: builder.query({

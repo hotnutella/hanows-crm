@@ -1,0 +1,9 @@
+.client {
+    padding: 1rem;
+    border-radius: 5px;
+}
+
+.client:hover {
+    background-color: #f4f4f4;
+    cursor: pointer;
+}
