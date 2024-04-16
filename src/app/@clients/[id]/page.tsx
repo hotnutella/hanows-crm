@@ -1,5 +1,10 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect } from 'react';
 import ClientsPage from '../page'; 
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/store';
+import { setSelectedClient } from '@/store/clientSearchSlice';
 
 interface SelectedClientOptionPageProps {
     params: {
@@ -8,7 +13,13 @@ interface SelectedClientOptionPageProps {
 }
 
 const SelectedClientOptionPage: React.FC<SelectedClientOptionPageProps> = ({ params }) => {
-    return <ClientsPage selectedClient={params.id} />;
+    const dispatch = useDispatch<AppDispatch>();
+
+    useEffect(() => {
+        dispatch(setSelectedClient(Number(params.id)));
+    }, [dispatch, params.id]);
+
+    return <ClientsPage />;
 };
 
 export default SelectedClientOptionPage;

@@ -3,13 +3,16 @@ import { Client } from '@/store/clientsApi'
 import { Box, Typography } from '@mui/material'
 import styles from './ClientOption.module.css'
 import Link from 'next/link'
+import { useSelector } from 'react-redux'
+import { selectSelectedClient } from '@/store/clientSearchSlice'
 
 interface ClientOptionProps {
     client: Client
-    isSelected?: boolean
 }
 
-const ClientOption: React.FC<ClientOptionProps> = ({ client, isSelected }) => {
+const ClientOption: React.FC<ClientOptionProps> = ({ client }) => {
+    const selectedClientId = useSelector(selectSelectedClient);
+    const isSelected = selectedClientId === client.id;
     const className = isSelected ? `${styles.client} ${styles.selected}` : styles.client
 
     return (
