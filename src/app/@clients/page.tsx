@@ -17,7 +17,7 @@ const ClientsPage: React.FC = () => {
     }) || [];
 
     return (
-        <Stack spacing={2}>
+        <Stack spacing={2} mr={1}>
             <ClientsHeader />
             {filteredClients.map((client) => (
                 <ClientOption key={client.id} client={client} />
