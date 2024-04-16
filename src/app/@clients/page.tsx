@@ -8,7 +8,11 @@ import ClientsHeader from '@/components/clients/ClientsHeader';
 import { useSelector } from 'react-redux';
 import { selectSearchTerm } from '@/store/clientSearchSlice';
 
-const ClientsPage: React.FC = () => {
+interface ClientsPageProps {
+    selectedClient?: string;
+}
+
+const ClientsPage: React.FC<ClientsPageProps> = (props) => {
     const { data: clients } = useGetClientsQuery();
     const searchTerm = useSelector(selectSearchTerm);
 
@@ -20,7 +24,10 @@ const ClientsPage: React.FC = () => {
         <Stack spacing={2} mr={2}>
             <ClientsHeader />
             {filteredClients.map((client) => (
-                <ClientOption key={client.id} client={client} />
+                <ClientOption 
+                    key={client.id} 
+                    client={client} 
+                    isSelected={Number(props?.selectedClient) === client.id || false} />
             ))}
         </Stack>
     );

@@ -24,7 +24,7 @@ export default function RootLayout({
                 {clients}
               </Box>
             </Grid>
-            <Grid item xs>
+            <Grid item xs px="0 !important">
               <Box height="100vh" overflow="hidden">
                 {chat}
               </Box>

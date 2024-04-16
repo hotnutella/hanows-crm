@@ -16,8 +16,12 @@ export const clientsApi = createApi({
     getClients: builder.query<Client[], void>({
       query: () => ({ url: 'clients', method: 'GET' }),
     }),
-    getClient: builder.query({
-      query: (id) => ({ url: `clients/${id}`, method: 'GET' }),
+    getClient: builder.query<Client, string>({
+      query: (id) => ({ url: `clients?id=eq.${id}`, method: 'GET' }),
+      transformResponse: (response: Client[]) => {
+        if (!response) return {} as Client;
+        return response[0];
+      },
     }),
     createClient: builder.mutation({
       query: (newClient) => ({

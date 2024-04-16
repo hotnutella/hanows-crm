@@ -3,7 +3,7 @@
     border-radius: 5px;
 }
 
-.client:hover {
+.client:hover, .selected {
     background-color: #f4f4f4;
     cursor: pointer;
 }
