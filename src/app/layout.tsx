@@ -6,11 +6,12 @@ import { Box, Grid } from "@mui/material";
 import '@/styles/global.css';
 
 export default function RootLayout({
-  children,
-  clients
+  clients,
+  chat
 }: Readonly<{
   children: React.ReactNode;
   clients: React.ReactNode;
+  chat: React.ReactNode;
 }>) {
   return (
     <html lang="en">
@@ -25,7 +26,7 @@ export default function RootLayout({
             </Grid>
             <Grid item xs>
               <Box height="100vh" overflow="hidden">
-                {children}
+                {chat}
               </Box>
             </Grid>
           </Grid>
