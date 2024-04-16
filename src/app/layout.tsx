@@ -1,8 +1,9 @@
 'use client';
 
 import { Provider } from "react-redux";
-import { store } from "../../store";
-import { Grid } from "@mui/material";
+import { store } from "@/store";
+import { Box, Grid } from "@mui/material";
+import '@/styles/global.css';
 
 export default function RootLayout({
   children,
@@ -18,10 +19,14 @@ export default function RootLayout({
         <Provider store={store}>
           <Grid container spacing={2}>
             <Grid item width={400} minWidth={400}>
-              {clients}
+              <Box height="100vh" overflow="auto">
+                {clients}
+              </Box>
             </Grid>
             <Grid item xs>
-              {children}
+              <Box height="100vh" overflow="hidden">
+                {children}
+              </Box>
             </Grid>
           </Grid>
         </Provider>

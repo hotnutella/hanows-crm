@@ -1,10 +1,10 @@
 import { Stack, Typography } from '@mui/material';
 import React from 'react';
 import styles from './ClientsHeader.module.css';
-import SearchBar from '../ui/SearchBar';
+import SearchBar from '@/components/ui/SearchBar';
 import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../../../store';
-import { setSearchTerm } from '../../../store/clientSearchSlice';
+import { AppDispatch } from '@/store';
+import { setSearchTerm } from '@/store/clientSearchSlice';
 
 const ClientsHeader: React.FC = () => {
     const search = useDispatch<AppDispatch>();

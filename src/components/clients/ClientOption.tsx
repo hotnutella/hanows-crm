@@ -1,5 +1,5 @@
 import React from 'react'
-import { Client } from '../../../store/clientsApi'
+import { Client } from '@/store/clientsApi'
 import { Box, Typography } from '@mui/material'
 import styles from './ClientOption.module.css'
 

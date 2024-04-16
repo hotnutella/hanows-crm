@@ -1,6 +1,6 @@
 import React from 'react';
 import WidgetCard from '@/components/WidgetCard';
-import { useGetInvoicesQuery } from '../../../store/invoicesApi';
+import { useGetInvoicesQuery } from '../../store/invoicesApi';
 import { Skeleton, Stack, Typography } from '@mui/material';
 
 const InvoicesWidget: React.FC = () => {

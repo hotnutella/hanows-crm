@@ -1,6 +1,6 @@
 import React from 'react';
 import WidgetCard from '@/components/WidgetCard';
-import { useGetClientsQuery } from '../../../store/clientsApi';
+import { useGetClientsQuery } from '../../store/clientsApi';
 import { Skeleton, Stack, Typography } from '@mui/material';
 
 const ClientsWidget: React.FC = () => {
