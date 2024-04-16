@@ -9,7 +9,7 @@ interface SearchBarProps {
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     return (
-        <Paper component="form" className={styles.search}>
+        <Paper component="form" className={styles.search} style={{ borderRadius: '20px' }}>
             <InputBase 
                 placeholder="Search"
                 fullWidth
