@@ -1,13 +1,17 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { clientsApi } from './clientsApi';
 import { invoicesApi } from './invoicesApi';
+import clientSearchReducer from './clientSearchSlice';
+
+const rootReducer = combineReducers({
+    clientSearch: clientSearchReducer,
+    [clientsApi.reducerPath]: clientsApi.reducer,
+    [invoicesApi.reducerPath]: invoicesApi.reducer,
+});
 
 export const store = configureStore({
-    reducer: {
-        [clientsApi.reducerPath]: clientsApi.reducer,
-        [invoicesApi.reducerPath]: invoicesApi.reducer,
-    },
+    reducer: rootReducer,
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware()
             .concat(clientsApi.middleware)
@@ -15,3 +19,6 @@ export const store = configureStore({
 });
 
 setupListeners(store.dispatch);
+
+export type RootState = ReturnType<typeof rootReducer>;
+export type AppDispatch = typeof store.dispatch;

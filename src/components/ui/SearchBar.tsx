@@ -3,12 +3,17 @@ import { InputBase, Paper } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 import styles from './SearchBar.module.css'
 
-const SearchBar = () => {
+interface SearchBarProps {
+    onSearch: (searchTerm: string) => void
+}
+
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     return (
         <Paper component="form" className={styles.search}>
             <InputBase 
                 placeholder="Search"
                 fullWidth
+                onChange={(e) => onSearch(e.target.value)}
                 startAdornment={<SearchIcon/>} />
         </Paper>
     )
