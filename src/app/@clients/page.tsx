@@ -17,7 +17,7 @@ const ClientsPage = () => {
     }) || [];
 
     return (
-        <Stack spacing={2} mr={2}>
+        <Stack spacing={2} mx={1}>
             <ClientsHeader />
             {filteredClients.map((client) => (
                 <ClientOption 
