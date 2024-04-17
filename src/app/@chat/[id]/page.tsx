@@ -5,6 +5,7 @@ import { useGetClientQuery } from '@/store/clientsApi';
 import { Box, Button, Stack, TextField, Typography } from '@mui/material';
 import React from 'react';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ChatContent from '@/components/chat/ChatContent';
 
 interface ChatPageProps {
     params: {
@@ -17,12 +18,21 @@ const ChatPage: React.FC<ChatPageProps> = ({ params }) => {
 
     return (
         <Box height="100vh">
-            <Box boxShadow={2} height={48} pl={2}>
+            <Box
+                sx={{ backgroundColor: 'white' }}
+                boxShadow={2}
+                pl={2}
+                py={1}
+                zIndex={100}
+                position="relative">
                 <Typography variant="h4">{client?.name}</Typography>
             </Box>
+
+            <ChatContent />
+            
             <Box
                 position="sticky"
-                top="calc(100vh - 48px)"
+                top="calc(100vh - 40px)"
                 left={0}
                 right={0}
                 boxShadow={2}

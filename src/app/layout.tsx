@@ -18,13 +18,13 @@ export default function RootLayout({
       <title>Hanows CRM</title>
       <body>
         <Provider store={store}>
-          <Grid container spacing={2}>
+          <Grid container>
             <Grid item width={400} minWidth={400}>
               <Box height="100vh" overflow="auto">
                 {clients}
               </Box>
             </Grid>
-            <Grid item xs px="0 !important">
+            <Grid item xs>
               <Box height="100vh" overflow="hidden">
                 {chat}
               </Box>
