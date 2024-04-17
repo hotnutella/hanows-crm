@@ -1,11 +1,12 @@
+import { Invoice } from '@/store/invoicesApi';
 import { Paper, Typography } from '@mui/material';
 import React from 'react';
 
 interface InvoiceMessageProps {
-    // Define your props here
+    invoice: Invoice;
 }
 
-const InvoiceMessage: React.FC<InvoiceMessageProps> = (props) => {
+const InvoiceMessage: React.FC<InvoiceMessageProps> = ({ invoice }) => {
     // Add your component logic here
 
     return (
@@ -17,7 +18,7 @@ const InvoiceMessage: React.FC<InvoiceMessageProps> = (props) => {
                 height: '16rem',
             }}
         >
-            <Typography variant="body1">Invoice</Typography>
+            <Typography variant="body1">Invoice {invoice.invoice_number}</Typography>
         </Paper>
     );
 };

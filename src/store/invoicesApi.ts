@@ -1,12 +1,29 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQuery } from '@/utils/baseQuery';
 
+export interface Invoice {
+  id: number;
+  client_id: number;
+  invoice_number: string;
+  invoice_date: string;
+  due_date: string;
+  status: string;
+  total_amount: number;
+  paid_amount: number;
+  created_at: Date;
+  updated_at: Date;
+  additional_info: JSON;
+}
+
 export const invoicesApi = createApi({
   reducerPath: 'invoicesApi',
   baseQuery: baseQuery,
   endpoints: (builder) => ({
-    getInvoices: builder.query({
+    getInvoices: builder.query<Invoice[], void>({
       query: () => ({ url: 'invoices', method: 'GET' }),
+    }),
+    getInvoicesByClient: builder.query<Invoice[], number>({
+      query: (clientId) => ({ url: `invoices?client_id=eq.${clientId}`, method: 'GET' }),
     }),
     getInvoice: builder.query({
       query: (id) => ({ url: `invoices/${id}`, method: 'GET' }),
@@ -36,6 +53,7 @@ export const invoicesApi = createApi({
 
 export const { 
   useGetInvoicesQuery,
+  useGetInvoicesByClientQuery,
   useGetInvoiceQuery,
   useCreateInvoiceMutation,
   useUpdateInvoiceMutation,

@@ -1,15 +1,14 @@
 import { Box, Stack } from '@mui/material';
 import React, { useEffect, useRef } from 'react';
 import InvoiceMessage from './InvoiceMessage';
+import { useGetInvoicesByClientQuery } from '@/store/invoicesApi';
 
 interface ChatContentProps {
-    // Define the props for the ChatContent component here
+    clientId: number;
 }
 
 const ChatContent: React.FC<ChatContentProps> = (props) => {
-    // Implement the logic for the ChatContent component here
-
-    const invoices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+    const { data: invoices } = useGetInvoicesByClientQuery(props.clientId);
     const endOfMessagesRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
@@ -23,10 +22,10 @@ const ChatContent: React.FC<ChatContentProps> = (props) => {
             overflow="auto"
         >
             <Stack spacing={2} minHeight="100%" justifyContent="end">
-                {invoices.map((invoice) => (
-                    <Stack key={invoice} direction="row" justifyContent="space-between">
+                {invoices?.map((invoice) => (
+                    <Stack key={invoice.id} direction="row" justifyContent="space-between">
                         <Box></Box>
-                        <InvoiceMessage />
+                        <InvoiceMessage invoice={invoice} />
                     </Stack>
                 ))}
             </Stack>

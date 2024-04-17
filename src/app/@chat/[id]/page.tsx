@@ -28,7 +28,7 @@ const ChatPage: React.FC<ChatPageProps> = ({ params }) => {
                 <Typography variant="h4">{client?.name}</Typography>
             </Box>
 
-            <ChatContent />
+            <ChatContent clientId={+params.id} />
             
             <Box
                 position="sticky"

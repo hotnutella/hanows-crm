@@ -4,7 +4,7 @@ import React from 'react';
 import { useGetInvoicesQuery } from '../../store/invoicesApi';
 
 const InvoicesPage: React.FC = () => {
-    const { data: invoices } = useGetInvoicesQuery({});
+    const { data: invoices } = useGetInvoicesQuery();
     console.log(invoices)
     
     return (
