@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react';
-import { useGetInvoicesQuery } from '../../store/invoicesApi';
+import { useGetInvoicesQuery } from '../../store/api/invoicesApi';
 
 const InvoicesPage: React.FC = () => {
     const { data: invoices } = useGetInvoicesQuery();

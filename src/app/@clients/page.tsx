@@ -1,12 +1,12 @@
 'use client'
 
 import React from 'react';
-import { useGetClientsQuery } from '../../store/clientsApi';
+import { useGetClientsQuery } from '../../store/api/clientsApi';
 import { Stack } from '@mui/material';
 import ClientOption from '@/components/clients/ClientOption';
 import ClientsHeader from '@/components/clients/ClientsHeader';
 import { useSelector } from 'react-redux';
-import { selectSearchTerm } from '@/store/clientSearchSlice';
+import { selectSearchTerm } from '@/store/slices/clientSearchSlice';
 
 const ClientsPage = () => {
     const { data: clients } = useGetClientsQuery();

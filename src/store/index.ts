@@ -1,8 +1,8 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
-import { clientsApi } from './clientsApi';
-import { invoicesApi } from './invoicesApi';
-import clientSearchReducer from './clientSearchSlice';
+import { clientsApi } from './api/clientsApi';
+import { invoicesApi } from './api/invoicesApi';
+import clientSearchReducer from './slices/clientSearchSlice';
 
 const rootReducer = combineReducers({
     clientSearch: clientSearchReducer,

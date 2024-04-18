@@ -4,7 +4,7 @@ import styles from './ClientsHeader.module.css';
 import SearchBar from '@/components/ui/SearchBar';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/store';
-import { setSearchTerm } from '@/store/clientSearchSlice';
+import { setSearchTerm } from '@/store/slices/clientSearchSlice';
 
 const ClientsHeader: React.FC = () => {
     const search = useDispatch<AppDispatch>();

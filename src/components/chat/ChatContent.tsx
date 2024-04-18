@@ -1,7 +1,7 @@
 import { Box, Stack } from '@mui/material';
 import React, { useEffect, useRef } from 'react';
 import InvoiceMessage from './InvoiceMessage';
-import { useGetInvoicesByClientQuery } from '@/store/invoicesApi';
+import { useGetInvoicesByClientQuery } from '@/store/api/invoicesApi';
 
 interface ChatContentProps {
     clientId: number;

@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import ClientsPage from '../page'; 
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/store';
-import { setSelectedClient } from '@/store/clientSearchSlice';
+import { setSelectedClient } from '@/store/slices/clientSearchSlice';
 
 interface SelectedClientOptionPageProps {
     params: {

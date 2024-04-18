@@ -1,4 +1,4 @@
-import { Invoice } from '@/store/invoicesApi';
+import { Invoice } from '@/store/api/invoicesApi';
 import { Paper, Typography } from '@mui/material';
 import React from 'react';
 
@@ -16,6 +16,7 @@ const InvoiceMessage: React.FC<InvoiceMessageProps> = ({ invoice }) => {
                 padding: '8px', 
                 width: '10rem',
                 height: '16rem',
+                userSelect: 'none'
             }}
         >
             <Typography variant="body1">Invoice {invoice.invoice_number}</Typography>

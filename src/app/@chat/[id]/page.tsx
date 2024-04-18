@@ -1,7 +1,7 @@
 'use client';
 
 import InvoiceLineForm from '@/components/chat/InvoiceLineForm';
-import { useGetClientQuery } from '@/store/clientsApi';
+import { useGetClientQuery } from '@/store/api/clientsApi';
 import { Box, Button, Stack, TextField, Typography } from '@mui/material';
 import React from 'react';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
