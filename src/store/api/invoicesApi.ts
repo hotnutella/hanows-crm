@@ -5,7 +5,7 @@ export interface Invoice {
   id: number;
   client_id: number;
   invoice_number: string;
-  invoice_date: string;
+  issue_date: string;
   due_date: string;
   status: string;
   total_amount: number;
