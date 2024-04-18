@@ -2,12 +2,14 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { clientsApi } from './api/clientsApi';
 import { invoicesApi } from './api/invoicesApi';
+import { invoiceLinesApi } from './api/invoiceLinesApi';
 import clientSearchReducer from './slices/clientSearchSlice';
 
 const rootReducer = combineReducers({
     clientSearch: clientSearchReducer,
     [clientsApi.reducerPath]: clientsApi.reducer,
     [invoicesApi.reducerPath]: invoicesApi.reducer,
+    [invoiceLinesApi.reducerPath]: invoiceLinesApi.reducer,
 });
 
 export const store = configureStore({
@@ -15,7 +17,8 @@ export const store = configureStore({
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware()
             .concat(clientsApi.middleware)
-            .concat(invoicesApi.middleware),
+            .concat(invoicesApi.middleware)
+            .concat(invoiceLinesApi.middleware),
 });
 
 setupListeners(store.dispatch);

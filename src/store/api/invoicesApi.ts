@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { baseQuery } from '@/utils/baseQuery';
+import { baseQuery } from '@/store/api/baseQuery';
 
 export interface Invoice {
   id: number;
