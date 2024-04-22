@@ -46,6 +46,10 @@ const ChatPage: React.FC<ChatPageProps> = ({ params }) => {
         }
         
         const resizeObserver = new ResizeObserver(() => {
+            if (!formRef.current) {
+                return;
+            }
+            
             const height = formRef.current!.getBoundingClientRect().height;
             setFormHeight(height);
         });
