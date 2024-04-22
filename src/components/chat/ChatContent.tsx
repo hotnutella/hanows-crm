@@ -5,6 +5,7 @@ import { useGetInvoicesByClientQuery } from '@/store/api/invoicesApi';
 
 interface ChatContentProps {
     clientId: number;
+    formHeight: number;
 }
 
 const ChatContent: React.FC<ChatContentProps> = (props) => {
@@ -17,7 +18,7 @@ const ChatContent: React.FC<ChatContentProps> = (props) => {
 
     return (
         <Box
-            height="calc(100vh - 58px - 184px)"
+            height={`calc(100vh - 58px - ${props.formHeight || 0}px)`}
             width="100%"
             overflow="auto"
         >
