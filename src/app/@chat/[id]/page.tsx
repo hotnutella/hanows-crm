@@ -1,8 +1,8 @@
 'use client';
 
-import InvoiceLineForm from '@/components/chat/InvoiceLineForm';
+import InvoiceLineForm, { LineData } from '@/components/chat/InvoiceLineForm';
 import { useGetClientQuery } from '@/store/api/clientsApi';
-import { Box, Button, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, Stack, Typography } from '@mui/material';
 import React from 'react';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ChatContent from '@/components/chat/ChatContent';
@@ -13,8 +13,31 @@ interface ChatPageProps {
     };
 }
 
+interface Message {
+    lines: {
+        [key: number]: LineData;
+    }
+}
+
+const initialMessage: Message = {
+    lines: {},
+};
+
 const ChatPage: React.FC<ChatPageProps> = ({ params }) => {
+    const [message, setMessage] = React.useState<Message>(initialMessage);
     const { data: client } = useGetClientQuery(params.id);
+
+    const handleInvoiceLineChange = (data: LineData, lineId: number) => {
+        setMessage({
+            ...message,
+            lines: {
+                ...message.lines,
+                [lineId]: data,
+            }
+        });
+    }
+
+    console.log(message)
 
     return (
         <Box height="100vh">
@@ -29,7 +52,7 @@ const ChatPage: React.FC<ChatPageProps> = ({ params }) => {
             </Box>
 
             <ChatContent clientId={+params.id} />
-            
+
             <Box
                 position="sticky"
                 top="calc(100vh - 40px)"
@@ -39,7 +62,11 @@ const ChatPage: React.FC<ChatPageProps> = ({ params }) => {
                 p={2}
             >
                 <Stack direction="row" justifyContent="space-between" spacing={2}>
-                    <InvoiceLineForm onChange={(data) => console.log(data)} />
+                    <Stack direction="column" spacing={2}>
+                        {[0, 1, 2].map((lineId) => (
+                            <InvoiceLineForm key={lineId} onChange={(data: LineData) => handleInvoiceLineChange(data, lineId)} />
+                        ))}
+                    </Stack>
                     <Button
                         size="small"
                         variant="contained"

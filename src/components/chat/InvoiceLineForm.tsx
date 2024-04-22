@@ -1,7 +1,7 @@
-import { Box, Stack, TextField } from '@mui/material';
+import { Stack, TextField } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
-interface LineData {
+export interface LineData {
     lineText: string;
     quantity: number;
     vat: number;
@@ -36,7 +36,9 @@ const InvoiceLineForm: React.FC<InvoiceLineFormProps> = ({ onChange }) => {
             quantity: quantity,
             vat,
         });
-    }, [lineText, quantity, vat, onChange]);
+        // Excluding onChange dependency to avoid infinite loop
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [lineText, quantity, vat]);
 
     return (
         <Stack direction="row" spacing={2}>
@@ -45,8 +47,8 @@ const InvoiceLineForm: React.FC<InvoiceLineFormProps> = ({ onChange }) => {
                 value={lineText}
                 placeholder="Line item"
                 onChange={handleChangeLineText}
-                sx={{ width: '20rem'}}
-                InputProps={{ 
+                sx={{ width: '20rem' }}
+                InputProps={{
                     style: { borderRadius: '20px' }
                 }}
             />
@@ -58,7 +60,7 @@ const InvoiceLineForm: React.FC<InvoiceLineFormProps> = ({ onChange }) => {
                 placeholder="Qty"
                 onChange={handleQuantityChange}
                 sx={{ width: '5rem' }}
-                InputProps={{ 
+                InputProps={{
                     style: { borderRadius: '20px' }
                 }}
             />
@@ -70,7 +72,7 @@ const InvoiceLineForm: React.FC<InvoiceLineFormProps> = ({ onChange }) => {
                 placeholder="VAT"
                 onChange={handleVatChange}
                 sx={{ width: '5rem' }}
-                InputProps={{ 
+                InputProps={{
                     style: { borderRadius: '20px' }
                 }}
             />
