@@ -2,9 +2,10 @@
 
 import InvoiceLineForm, { LineData } from '@/components/chat/InvoiceLineForm';
 import { useGetClientQuery } from '@/store/api/clientsApi';
-import { Box, Button, Stack, Typography } from '@mui/material';
+import { Box, Fab, Stack, Typography } from '@mui/material';
 import React, { useEffect } from 'react';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
+import AddIcon from '@mui/icons-material/Add';
 import ChatContent from '@/components/chat/ChatContent';
 
 interface ChatPageProps {
@@ -25,6 +26,7 @@ const initialMessage: Message = {
 
 const ChatPage: React.FC<ChatPageProps> = ({ params }) => {
     const [message, setMessage] = React.useState<Message>(initialMessage);
+    const [lineIds, setLineIds] = React.useState<number[]>([0]);
     const [formHeight, setFormHeight] = React.useState(0);
     const { data: client } = useGetClientQuery(params.id);
 
@@ -40,23 +42,27 @@ const ChatPage: React.FC<ChatPageProps> = ({ params }) => {
         });
     }
 
+    const handleNewLine = () => {
+        setLineIds(prev => [...prev, prev.length]);
+    }
+
     useEffect(() => {
         if (!formRef.current) {
             return;
         }
-        
+
         const resizeObserver = new ResizeObserver(() => {
             if (!formRef.current) {
                 return;
             }
-            
+
             const height = formRef.current!.getBoundingClientRect().height;
             setFormHeight(height);
         });
         resizeObserver.observe(formRef.current);
 
         return () => resizeObserver.disconnect();
-      }, []);
+    }, []);
 
     console.log(message)
 
@@ -84,19 +90,27 @@ const ChatPage: React.FC<ChatPageProps> = ({ params }) => {
                 ref={formRef}
             >
                 <Stack direction="row" justifyContent="space-between" spacing={2}>
-                    <Stack direction="column" spacing={2}>
-                        {[0, 1, 2].map((lineId) => (
-                            <InvoiceLineForm key={lineId} onChange={(data: LineData) => handleInvoiceLineChange(data, lineId)} />
-                        ))}
+                    <Stack direction="row" spacing={2}>
+                        <Stack direction="column" spacing={2}>
+                            {lineIds.map((lineId) => (
+                                <InvoiceLineForm key={lineId} onChange={(data: LineData) => handleInvoiceLineChange(data, lineId)} />
+                            ))}
+                        </Stack>
+                        <Fab
+                            size="small"
+                            color="primary"
+                            sx={{ marginBottom: 0 }}
+                            onClick={handleNewLine}
+                        >
+                            <AddIcon />
+                        </Fab>
                     </Stack>
-                    <Button
-                        size="small"
-                        variant="contained"
-                        sx={{ borderRadius: '20px' }}
-                        endIcon={<ArrowUpwardIcon />}
-                    >
-                        Preview
-                    </Button>
+                    <Box>
+                        <Fab color="primary" variant="extended">
+                            <Typography variant="button">Preview</Typography>
+                            <KeyboardDoubleArrowUpIcon />
+                        </Fab>
+                    </Box>
                 </Stack>
             </Box>
         </Box>
