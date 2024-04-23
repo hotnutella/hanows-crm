@@ -1,11 +1,6 @@
 import { Stack, TextField } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-
-export interface LineData {
-    lineText: string;
-    quantity: number;
-    vat: number;
-}
+import { LineData } from '@/store/slices/messageSlice';
 
 interface InvoiceLineFormProps {
     onChange: (data: LineData) => void;
@@ -44,7 +39,7 @@ const InvoiceLineForm: React.FC<InvoiceLineFormProps> = ({ onChange }) => {
         <Stack direction="row" spacing={2}>
             <TextField
                 size="small"
-                value={lineText}
+                value={lineText || ''}
                 placeholder="Line item"
                 onChange={handleChangeLineText}
                 sx={{ width: '20rem' }}
@@ -55,7 +50,7 @@ const InvoiceLineForm: React.FC<InvoiceLineFormProps> = ({ onChange }) => {
 
             <TextField
                 size="small"
-                value={quantity === 0 ? '' : quantity}
+                value={quantity == 0 ? '' : quantity}
                 type="number"
                 placeholder="Qty"
                 onChange={handleQuantityChange}
@@ -67,7 +62,7 @@ const InvoiceLineForm: React.FC<InvoiceLineFormProps> = ({ onChange }) => {
 
             <TextField
                 size="small"
-                value={vat === 0 ? '' : vat}
+                value={vat == 0 ? '' : vat}
                 type="number"
                 placeholder="VAT"
                 onChange={handleVatChange}

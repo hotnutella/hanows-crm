@@ -1,12 +1,13 @@
 'use client';
 
-import InvoiceLineForm, { LineData } from '@/components/chat/InvoiceLineForm';
+import InvoiceLineForm from '@/components/chat/InvoiceLineForm';
 import { useGetClientQuery } from '@/store/api/clientsApi';
 import { Box, Fab, Stack, Typography } from '@mui/material';
 import React, { useEffect } from 'react';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import AddIcon from '@mui/icons-material/Add';
 import ChatContent from '@/components/chat/ChatContent';
+import { LineData } from '@/store/slices/messageSlice';
 
 interface ChatPageProps {
     params: {
@@ -46,6 +47,12 @@ const ChatPage: React.FC<ChatPageProps> = ({ params }) => {
         setLineIds(prev => [...prev, prev.length]);
     }
 
+    const handlePreview = () => {
+        console.log(message);
+        setMessage(initialMessage);
+        setLineIds([0]);
+    }
+
     useEffect(() => {
         if (!formRef.current) {
             return;
@@ -63,8 +70,6 @@ const ChatPage: React.FC<ChatPageProps> = ({ params }) => {
 
         return () => resizeObserver.disconnect();
     }, []);
-
-    console.log(message)
 
     return (
         <Box height="100vh">
@@ -93,7 +98,9 @@ const ChatPage: React.FC<ChatPageProps> = ({ params }) => {
                     <Stack direction="row" spacing={2}>
                         <Stack direction="column" spacing={2}>
                             {lineIds.map((lineId) => (
-                                <InvoiceLineForm key={lineId} onChange={(data: LineData) => handleInvoiceLineChange(data, lineId)} />
+                                <InvoiceLineForm 
+                                    key={lineId} 
+                                    onChange={(data: LineData) => handleInvoiceLineChange(data, lineId)} />
                             ))}
                         </Stack>
                         <Fab
@@ -106,7 +113,7 @@ const ChatPage: React.FC<ChatPageProps> = ({ params }) => {
                         </Fab>
                     </Stack>
                     <Box>
-                        <Fab color="primary" variant="extended">
+                        <Fab color="primary" variant="extended" onClick={handlePreview}>
                             <Typography variant="button">Preview</Typography>
                             <KeyboardDoubleArrowUpIcon />
                         </Fab>
