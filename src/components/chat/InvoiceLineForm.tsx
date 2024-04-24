@@ -1,45 +1,41 @@
 import { Stack, TextField } from '@mui/material';
-import React, { useEffect, useState } from 'react';
-import { LineData } from '@/store/slices/messageSlice';
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { getLineData, addLine, updateLineText, updateQuantity, updateVat } from '@/store/slices/messageSlice';
+import { AppDispatch, RootState } from '@/store';
 
 interface InvoiceLineFormProps {
-    onChange: (data: LineData) => void;
+    clientId: number;
+    lineId: number;
 }
 
-const InvoiceLineForm: React.FC<InvoiceLineFormProps> = ({ onChange }) => {
-    const [lineText, setLineText] = useState('');
-    const [quantity, setQuantity] = useState(0);
-    const [vat, setVat] = useState(0);
+const InvoiceLineForm: React.FC<InvoiceLineFormProps> = ({ clientId, lineId }) => {
+    const dispatch = useDispatch<AppDispatch>();
+    const lineData = useSelector((state: RootState) => getLineData(state, clientId, lineId));
+
+    if (!lineData) {
+        dispatch(addLine({ clientId, lineId, data: { lineText: '', quantity: 0, vat: 0 } }));
+    }
 
     const handleChangeLineText = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setLineText(e.target.value);
+        dispatch(updateLineText({ clientId, lineId, lineText: e.target.value }));
     }
 
     const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = Math.max(0, +e.target.value);
-        setQuantity(newValue);
+        dispatch(updateQuantity({ clientId, lineId, quantity: newValue }));
     }
 
     const handleVatChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = Math.max(0, +e.target.value);
-        setVat(newValue);
+        dispatch(updateVat({ clientId, lineId, vat: newValue }));
     }
-
-    useEffect(() => {
-        onChange({
-            lineText,
-            quantity: quantity,
-            vat,
-        });
-        // Excluding onChange dependency to avoid infinite loop
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [lineText, quantity, vat]);
 
     return (
         <Stack direction="row" spacing={2}>
             <TextField
                 size="small"
-                value={lineText || ''}
+                value={lineData?.lineText || ''}
                 placeholder="Line item"
                 onChange={handleChangeLineText}
                 sx={{ width: '20rem' }}
@@ -50,7 +46,7 @@ const InvoiceLineForm: React.FC<InvoiceLineFormProps> = ({ onChange }) => {
 
             <TextField
                 size="small"
-                value={quantity == 0 ? '' : quantity}
+                value={lineData?.quantity == 0 ? '' : lineData?.quantity}
                 type="number"
                 placeholder="Qty"
                 onChange={handleQuantityChange}
@@ -62,7 +58,7 @@ const InvoiceLineForm: React.FC<InvoiceLineFormProps> = ({ onChange }) => {
 
             <TextField
                 size="small"
-                value={vat == 0 ? '' : vat}
+                value={lineData?.vat == 0 ? '' : lineData?.vat}
                 type="number"
                 placeholder="VAT"
                 onChange={handleVatChange}

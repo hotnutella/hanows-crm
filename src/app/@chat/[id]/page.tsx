@@ -7,7 +7,9 @@ import React, { useEffect } from 'react';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import AddIcon from '@mui/icons-material/Add';
 import ChatContent from '@/components/chat/ChatContent';
-import { LineData } from '@/store/slices/messageSlice';
+import { LineData, resetMessage } from '@/store/slices/messageSlice';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/store';
 
 interface ChatPageProps {
     params: {
@@ -15,42 +17,21 @@ interface ChatPageProps {
     };
 }
 
-interface Message {
-    lines: {
-        [key: number]: LineData;
-    }
-}
-
-const initialMessage: Message = {
-    lines: {},
-};
-
 const ChatPage: React.FC<ChatPageProps> = ({ params }) => {
-    const [message, setMessage] = React.useState<Message>(initialMessage);
     const [lineIds, setLineIds] = React.useState<number[]>([0]);
     const [formHeight, setFormHeight] = React.useState(0);
     const { data: client } = useGetClientQuery(params.id);
+    const dispatch = useDispatch<AppDispatch>();
 
     const formRef = React.useRef<HTMLDivElement | null>(null);
-
-    const handleInvoiceLineChange = (data: LineData, lineId: number) => {
-        setMessage({
-            ...message,
-            lines: {
-                ...message.lines,
-                [lineId]: data,
-            }
-        });
-    }
 
     const handleNewLine = () => {
         setLineIds(prev => [...prev, prev.length]);
     }
 
     const handlePreview = () => {
-        console.log(message);
-        setMessage(initialMessage);
         setLineIds([0]);
+        dispatch(resetMessage(+params.id));
     }
 
     useEffect(() => {
@@ -100,7 +81,8 @@ const ChatPage: React.FC<ChatPageProps> = ({ params }) => {
                             {lineIds.map((lineId) => (
                                 <InvoiceLineForm 
                                     key={lineId} 
-                                    onChange={(data: LineData) => handleInvoiceLineChange(data, lineId)} />
+                                    clientId={+params.id}
+                                    lineId={lineId} />
                             ))}
                         </Stack>
                         <Fab
