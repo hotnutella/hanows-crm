@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../index';
 
 
@@ -13,8 +13,13 @@ interface LinePayloadBase {
     lineId: number;
 }
 
-interface AddLinePayload extends LinePayloadBase {
+interface AddLinePayload {
+    clientId: number;
     data: LineData;
+}
+
+interface UpdateLinePayload extends LinePayloadBase {
+    data: LineData;   
 }
 
 interface LineTextPayload extends LinePayloadBase {
@@ -33,7 +38,7 @@ interface MessageState {
     [clientId: number]: {
         lines: {
             [key: number]: LineData;
-        }
+        },
     }
 }
 
@@ -44,15 +49,16 @@ const messageSlice = createSlice({
     initialState,
     reducers: {
         addLine: (state, action: PayloadAction<AddLinePayload>) => {
-            const { clientId, lineId, data } = action.payload;
+            const { clientId, data } = action.payload;
             if (!state[clientId]) {
                 state[clientId] = {
-                    lines: {}
+                    lines: {},
                 }
             }
+            const lineId = Object.keys(state[clientId].lines).length;
             state[clientId].lines[lineId] = data;
         },
-        updateLine: (state, action: PayloadAction<AddLinePayload>) => {
+        updateLine: (state, action: PayloadAction<UpdateLinePayload>) => {
             const { clientId, lineId, data } = action.payload;
             state[clientId].lines[lineId] = data;
         },
@@ -77,6 +83,11 @@ const messageSlice = createSlice({
 export const getLineData = (state: RootState, clientId: number, lineId: number) => {
     return state.message[clientId]?.lines[lineId];
 }
+
+export const getLines = createSelector(
+    (state: RootState, clientId: number) => state.message[clientId]?.lines,
+    (lines) => lines || {}
+)
 
 export const { 
     addLine,

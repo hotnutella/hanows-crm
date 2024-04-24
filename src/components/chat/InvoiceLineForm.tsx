@@ -1,7 +1,7 @@
 import { Stack, TextField } from '@mui/material';
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getLineData, addLine, updateLineText, updateQuantity, updateVat } from '@/store/slices/messageSlice';
+import { getLineData, updateLineText, updateQuantity, updateVat } from '@/store/slices/messageSlice';
 import { AppDispatch, RootState } from '@/store';
 
 interface InvoiceLineFormProps {
@@ -12,10 +12,6 @@ interface InvoiceLineFormProps {
 const InvoiceLineForm: React.FC<InvoiceLineFormProps> = ({ clientId, lineId }) => {
     const dispatch = useDispatch<AppDispatch>();
     const lineData = useSelector((state: RootState) => getLineData(state, clientId, lineId));
-
-    if (!lineData) {
-        dispatch(addLine({ clientId, lineId, data: { lineText: '', quantity: 0, vat: 0 } }));
-    }
 
     const handleChangeLineText = (e: React.ChangeEvent<HTMLInputElement>) => {
         dispatch(updateLineText({ clientId, lineId, lineText: e.target.value }));

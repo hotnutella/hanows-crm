@@ -1,48 +1,53 @@
 import { Box, Fab, Stack, Typography } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import React, { memo, use, useEffect } from 'react'
 import InvoiceLineForm from './InvoiceLineForm'
 import AddIcon from '@mui/icons-material/Add'
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp'
-import { useDispatch } from 'react-redux'
-import { AppDispatch } from '@/store'
-import { resetMessage } from '@/store/slices/messageSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { AppDispatch, RootState } from '@/store'
+import { addLine, resetMessage, getLines } from '@/store/slices/messageSlice'
 
 interface InvoiceFormProps {
     clientId: number
     onHeightChange: (height: number) => void
 }
 
-const InvoiceForm: React.FC<InvoiceFormProps> = ({ clientId, onHeightChange }) => {
-    const [lineIds, setLineIds] = useState<number[]>([0]);
+const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clientId, onHeightChange }) {
+    const ref = React.useRef<HTMLDivElement | null>(null);
+    const lines = useSelector((state: RootState) => getLines(state, clientId));
     const dispatch = useDispatch<AppDispatch>();
 
     const handleNewLine = () => {
-        setLineIds(prev => [...prev, prev.length]);
+        dispatch(addLine({ clientId, data: { lineText: '', quantity: 0, vat: 0 } }));
     }
 
     const handlePreview = () => {
-        setLineIds([0]);
         dispatch(resetMessage(clientId));
+        handleNewLine();
     }
 
-    const formRef = React.useRef<HTMLDivElement | null>(null);
-
     useEffect(() => {
-        if (!formRef.current) {
+        if (!ref.current) {
             return;
         }
 
         const resizeObserver = new ResizeObserver(() => {
-            if (!formRef.current) {
+            if (!ref.current) {
                 return;
             }
 
-            const height = formRef.current!.getBoundingClientRect().height;
+            const height = ref.current!.getBoundingClientRect().height;
             onHeightChange(height);
         });
-        resizeObserver.observe(formRef.current);
+        resizeObserver.observe(ref.current);
 
         return () => resizeObserver.disconnect();
+    }, [lines, onHeightChange]);
+
+    useEffect(() => {
+        if (Object.keys(lines).length === 0) {
+            handleNewLine();
+        }
 
         // Only need to run this effect once
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -56,16 +61,16 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ clientId, onHeightChange }) =
             right={0}
             boxShadow={2}
             p={2}
-            ref={formRef}
+            ref={ref}
         >
             <Stack direction="row" justifyContent="space-between" spacing={2}>
                 <Stack direction="row" spacing={2}>
                     <Stack direction="column" spacing={2}>
-                        {lineIds.map((lineId) => (
+                        {Object.keys(lines).map(lineId => (
                             <InvoiceLineForm
                                 key={lineId}
                                 clientId={clientId}
-                                lineId={lineId} />
+                                lineId={+lineId} />
                         ))}
                     </Stack>
                     <Fab
@@ -86,6 +91,6 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ clientId, onHeightChange }) =
             </Stack>
         </Box>
     )
-}
+})
 
 export default InvoiceForm
