@@ -8,6 +8,7 @@ import { AppDispatch, RootState } from '@/store'
 import { addLine, resetMessage, getLines } from '@/store/slices/messageSlice'
 import { useCreateInvoiceMutation } from '@/store/api/invoicesApi'
 import { useCreateInvoiceLineMutation } from '@/store/api/invoiceLinesApi'
+import { getInvoiceNumber } from '@/store/slices/clientSlice'
 
 interface InvoiceFormProps {
     clientId: number
@@ -17,6 +18,7 @@ interface InvoiceFormProps {
 const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clientId, onHeightChange }) {
     const ref = React.useRef<HTMLDivElement | null>(null);
     const lines = useSelector((state: RootState) => getLines(state, clientId));
+    const invoiceNumber = useSelector((state: RootState) => getInvoiceNumber(state, clientId));
     const dispatch = useDispatch<AppDispatch>();
 
     const [createInvoice, { isLoading: creatingInvoice }] = useCreateInvoiceMutation();
@@ -29,7 +31,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
     const handlePreview = async () => {
         const response = await createInvoice({
             client_id: clientId,
-            invoice_number: `INV-${Math.floor(Math.random() * 1000)}`, // TODO: Replace with actual invoice number
+            invoice_number: invoiceNumber,
             issue_date: new Date().toISOString(),
             due_date: new Date(new Date().setDate(new Date().getDate() + 20)).toISOString(),
             status: 'draft',

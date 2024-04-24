@@ -2,6 +2,9 @@ import { Box, Stack } from '@mui/material';
 import React, { useEffect, useRef } from 'react';
 import InvoiceMessage from './InvoiceMessage';
 import { useGetInvoicesByClientQuery } from '@/store/api/invoicesApi';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/store';
+import { setInvoiceCount } from '@/store/slices/clientSlice';
 
 interface ChatContentProps {
     clientId: number;
@@ -11,10 +14,15 @@ interface ChatContentProps {
 const ChatContent: React.FC<ChatContentProps> = (props) => {
     const { data: invoices } = useGetInvoicesByClientQuery(props.clientId);
     const endOfMessagesRef = useRef<HTMLDivElement | null>(null);
+    const dispatch = useDispatch<AppDispatch>();
 
     useEffect(() => {
         endOfMessagesRef.current?.scrollIntoView();
     }, [invoices, props.formHeight]);
+
+    useEffect(() => {
+        dispatch(setInvoiceCount({ clientId: props.clientId, invoiceCount: invoices?.length || 0 }));
+    }, [invoices, props.clientId, dispatch]);
 
     return (
         <Box

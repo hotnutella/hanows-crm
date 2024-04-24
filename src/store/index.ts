@@ -5,10 +5,12 @@ import { invoicesApi } from './api/invoicesApi';
 import { invoiceLinesApi } from './api/invoiceLinesApi';
 import clientSearchReducer from './slices/clientSearchSlice';
 import messageReducer from './slices/messageSlice';
+import clientReducer from './slices/clientSlice';
 
 const rootReducer = combineReducers({
     clientSearch: clientSearchReducer,
     message: messageReducer,
+    client: clientReducer,
     [clientsApi.reducerPath]: clientsApi.reducer,
     [invoicesApi.reducerPath]: invoicesApi.reducer,
     [invoiceLinesApi.reducerPath]: invoiceLinesApi.reducer,
