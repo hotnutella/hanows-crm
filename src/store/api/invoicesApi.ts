@@ -21,26 +21,30 @@ export const invoicesApi = createApi({
   tagTypes: ['INVOICES'],
   endpoints: (builder) => ({
     getInvoices: builder.query<Invoice[], void>({
-      query: () => ({ url: 'invoices', method: 'GET' }),
+      query: () => 'invoices',
     }),
     getInvoicesByClient: builder.query<Invoice[], number>({
-      query: (clientId) => ({ url: `invoices?client_id=eq.${clientId}`, method: 'GET' }),
+      query: (clientId) => `invoices?client_id=eq.${clientId}`,
       providesTags: ['INVOICES']
     }),
     getInvoice: builder.query({
-      query: (id) => ({ url: `invoices/${id}`, method: 'GET' }),
+      query: (id) => `invoices?id=eq.${id}`,
     }),
-    createInvoice: builder.mutation<Invoice[], Partial<Invoice>>({
+    createInvoice: builder.mutation<Invoice, Partial<Invoice>>({
       query: (newInvoice) => ({
         url: 'invoices',
         method: 'POST',
         body: newInvoice,
       }),
+      transformResponse: (response: Invoice[]) => {
+        if (!response) return {} as Invoice;
+        return response[0];
+      },
       invalidatesTags: ['INVOICES']
     }),
     updateInvoice: builder.mutation<Invoice, Partial<Invoice>>({
       query: ({ id, ...update }) => ({
-        url: `invoices/${id}`,
+        url: `invoices?id=eq.${id}`,
         method: 'PATCH',
         body: update,
       }),
@@ -48,7 +52,7 @@ export const invoicesApi = createApi({
     }),
     deleteInvoice: builder.mutation<void, number>({
       query: (id) => ({
-        url: `invoices/${id}`,
+        url: `invoices?id=eq.${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['INVOICES']

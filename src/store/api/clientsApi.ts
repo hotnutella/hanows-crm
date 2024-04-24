@@ -14,10 +14,10 @@ export const clientsApi = createApi({
   baseQuery: baseQuery,
   endpoints: (builder) => ({
     getClients: builder.query<Client[], void>({
-      query: () => ({ url: 'clients', method: 'GET' }),
+      query: () => 'clients',
     }),
     getClient: builder.query<Client, string>({
-      query: (id) => ({ url: `clients?id=eq.${id}`, method: 'GET' }),
+      query: (id) => `clients?id=eq.${id}`,
       transformResponse: (response: Client[]) => {
         if (!response) return {} as Client;
         return response[0];
@@ -32,14 +32,14 @@ export const clientsApi = createApi({
     }),
     updateClient: builder.mutation({
       query: ({ id, ...update }) => ({
-        url: `clients/${id}`,
+        url: `clients?id=eq.${id}`,
         method: 'PATCH',
         body: update,
       }),
     }),
     deleteClient: builder.mutation({
       query: (id) => ({
-        url: `clients/${id}`,
+        url: `clients?id=eq.${id}`,
         method: 'DELETE',
       }),
     }),

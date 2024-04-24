@@ -42,7 +42,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
             return;
         }
 
-        const invoiceId = response.data[0].id;
+        const invoiceId = response.data.id;
 
         Object.values(lines).forEach(line => {
             createInvoiceLine({
