@@ -1,11 +1,13 @@
 import { Box, Fab, Stack, Typography } from '@mui/material'
-import React, { memo, use, useEffect } from 'react'
+import React, { memo, useEffect } from 'react'
 import InvoiceLineForm from './InvoiceLineForm'
 import AddIcon from '@mui/icons-material/Add'
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@/store'
 import { addLine, resetMessage, getLines } from '@/store/slices/messageSlice'
+import { useCreateInvoiceMutation } from '@/store/api/invoicesApi'
+import { useCreateInvoiceLineMutation } from '@/store/api/invoiceLinesApi'
 
 interface InvoiceFormProps {
     clientId: number
@@ -17,13 +19,44 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
     const lines = useSelector((state: RootState) => getLines(state, clientId));
     const dispatch = useDispatch<AppDispatch>();
 
+    const [createInvoice, { isLoading: creatingInvoice }] = useCreateInvoiceMutation();
+    const [createInvoiceLine, { isLoading: creatingInvoiceLine }] = useCreateInvoiceLineMutation();
+
     const handleNewLine = () => {
         dispatch(addLine({ clientId, data: { lineText: '', quantity: 0, vat: 0 } }));
     }
 
-    const handlePreview = () => {
+    const handlePreview = async () => {
+        const unit_price = 100; // TODO: Add unit price to line data
+
+        const response = await createInvoice({
+            client_id: clientId,
+            invoice_number: `INV-${Math.floor(Math.random() * 1000)}`, // TODO: Replace with actual invoice number
+            issue_date: new Date().toISOString(),
+            due_date: new Date(new Date().setDate(new Date().getDate() + 20)).toISOString(),
+            status: 'draft',
+            total_amount: Object.values(lines).reduce((acc, line) => {
+                return acc + (line.quantity * unit_price + line.quantity * unit_price * line.vat / 100);
+            }, 0)
+        });
+
+        if (!('data' in response)) {
+            return;
+        }
+
+        const invoiceId = response.data[0].id;
+
+        Object.values(lines).forEach(line => {
+            createInvoiceLine({
+                invoice_id: invoiceId,
+                description: line.lineText,
+                quantity: line.quantity,
+                unit_price: unit_price,
+                vat: line.vat
+            });
+        });
         dispatch(resetMessage(clientId));
-        handleNewLine();
+        handleNewLine();        
     }
 
     useEffect(() => {
@@ -83,7 +116,12 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
                     </Fab>
                 </Stack>
                 <Box>
-                    <Fab color="primary" variant="extended" onClick={handlePreview}>
+                    <Fab
+                        color="primary"
+                        variant="extended"
+                        onClick={handlePreview}
+                        disabled={creatingInvoice || creatingInvoiceLine}
+                    >
                         <Typography variant="button">Preview</Typography>
                         <KeyboardDoubleArrowUpIcon />
                     </Fab>

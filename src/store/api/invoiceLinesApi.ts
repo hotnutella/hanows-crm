@@ -14,12 +14,14 @@ interface InvoiceLine {
 export const invoiceLinesApi = createApi({
     reducerPath: 'invoiceLinesApi',
     baseQuery: baseQuery,
+    tagTypes: ['INVOICE_LINES'],
     endpoints: (builder) => ({
         getInvoiceLines: builder.query<InvoiceLine[], void>({
             query: () => 'invoice_lines',
         }),
         getInvoiceLinesByInvoice: builder.query<InvoiceLine[], number>({
             query: (invoiceId) => `invoice_lines?invoice_id=eq.${invoiceId}`,
+            providesTags: ['INVOICE_LINES'],
         }),
         createInvoiceLine: builder.mutation<InvoiceLine, Partial<InvoiceLine>>({
             query: (invoiceLine) => ({
@@ -27,6 +29,7 @@ export const invoiceLinesApi = createApi({
                 method: 'POST',
                 body: invoiceLine,
             }),
+            invalidatesTags: ['INVOICE_LINES'],
         }),
         updateInvoiceLine: builder.mutation<InvoiceLine, Partial<InvoiceLine>>({
             query: (invoiceLine) => ({
@@ -34,12 +37,14 @@ export const invoiceLinesApi = createApi({
                 method: 'PUT',
                 body: invoiceLine,
             }),
+            invalidatesTags: ['INVOICE_LINES']
         }),
         deleteInvoiceLine: builder.mutation<void, number>({
             query: (id) => ({
                 url: `invoice_lines/${id}`,
                 method: 'DELETE',
             }),
+            invalidatesTags: ['INVOICE_LINES'],
         }),
     }),
 });

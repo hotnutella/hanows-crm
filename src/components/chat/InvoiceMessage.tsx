@@ -23,7 +23,7 @@ const InvoiceMessage: React.FC<InvoiceMessageProps> = ({ invoice }) => {
                     {invoiceLines?.map((line) => (
                         <Stack key={line.id} direction="row" justifyContent="space-between">
                             <Typography variant="body1" fontSize={10}>{line.description}</Typography>
-                            <Typography variant="body1" fontSize={10}>{line.quantity} x {line.unit_price + line.unit_price * line.vat}</Typography>
+                            <Typography variant="body1" fontSize={10}>{line.quantity} x {line.unit_price + line.unit_price * line.vat / 100}</Typography>
                         </Stack>
                     ))}
                 </Box>

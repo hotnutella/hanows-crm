@@ -18,22 +18,25 @@ export interface Invoice {
 export const invoicesApi = createApi({
   reducerPath: 'invoicesApi',
   baseQuery: baseQuery,
+  tagTypes: ['INVOICES'],
   endpoints: (builder) => ({
     getInvoices: builder.query<Invoice[], void>({
       query: () => ({ url: 'invoices', method: 'GET' }),
     }),
     getInvoicesByClient: builder.query<Invoice[], number>({
       query: (clientId) => ({ url: `invoices?client_id=eq.${clientId}`, method: 'GET' }),
+      providesTags: ['INVOICES']
     }),
     getInvoice: builder.query({
       query: (id) => ({ url: `invoices/${id}`, method: 'GET' }),
     }),
-    createInvoice: builder.mutation<Invoice, Partial<Invoice>>({
+    createInvoice: builder.mutation<Invoice[], Partial<Invoice>>({
       query: (newInvoice) => ({
         url: 'invoices',
         method: 'POST',
         body: newInvoice,
       }),
+      invalidatesTags: ['INVOICES']
     }),
     updateInvoice: builder.mutation<Invoice, Partial<Invoice>>({
       query: ({ id, ...update }) => ({
@@ -41,12 +44,14 @@ export const invoicesApi = createApi({
         method: 'PATCH',
         body: update,
       }),
+      invalidatesTags: ['INVOICES']
     }),
     deleteInvoice: builder.mutation<void, number>({
       query: (id) => ({
         url: `invoices/${id}`,
         method: 'DELETE',
       }),
+      invalidatesTags: ['INVOICES']
     }),
   }),
 });

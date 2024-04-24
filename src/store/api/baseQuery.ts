@@ -12,6 +12,7 @@ export const baseQuery = fetchBaseQuery({
     prepareHeaders: (headers) => {
         headers.set('apikey', supabaseHeaders.apikey);
         headers.set('Authorization', supabaseHeaders.Authorization);
+        headers.set('Prefer', 'return=representation');
         return headers;
     },
 });
