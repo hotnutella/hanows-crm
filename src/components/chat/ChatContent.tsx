@@ -14,7 +14,7 @@ const ChatContent: React.FC<ChatContentProps> = (props) => {
 
     useEffect(() => {
         endOfMessagesRef.current?.scrollIntoView();
-    }, [invoices]);
+    }, [invoices, props.formHeight]);
 
     return (
         <Box
