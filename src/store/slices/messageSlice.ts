@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../index';
 
 
-export interface LineData {
+interface LineData {
     lineText: string;
     quantity: number;
     vat: number;

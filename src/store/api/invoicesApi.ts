@@ -28,21 +28,21 @@ export const invoicesApi = createApi({
     getInvoice: builder.query({
       query: (id) => ({ url: `invoices/${id}`, method: 'GET' }),
     }),
-    createInvoice: builder.mutation({
+    createInvoice: builder.mutation<Invoice, Partial<Invoice>>({
       query: (newInvoice) => ({
         url: 'invoices',
         method: 'POST',
         body: newInvoice,
       }),
     }),
-    updateInvoice: builder.mutation({
+    updateInvoice: builder.mutation<Invoice, Partial<Invoice>>({
       query: ({ id, ...update }) => ({
         url: `invoices/${id}`,
         method: 'PATCH',
         body: update,
       }),
     }),
-    deleteInvoice: builder.mutation({
+    deleteInvoice: builder.mutation<void, number>({
       query: (id) => ({
         url: `invoices/${id}`,
         method: 'DELETE',
