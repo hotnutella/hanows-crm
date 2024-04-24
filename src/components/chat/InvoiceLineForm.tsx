@@ -1,7 +1,7 @@
 import { Stack, TextField } from '@mui/material';
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getLineData, updateLineText, updateQuantity, updateVat } from '@/store/slices/messageSlice';
+import { getLineData, updateLineText, updateQuantity, updateUnitPrice, updateVat } from '@/store/slices/messageSlice';
 import { AppDispatch, RootState } from '@/store';
 
 interface InvoiceLineFormProps {
@@ -20,6 +20,11 @@ const InvoiceLineForm: React.FC<InvoiceLineFormProps> = ({ clientId, lineId }) =
     const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = Math.max(0, +e.target.value);
         dispatch(updateQuantity({ clientId, lineId, quantity: newValue }));
+    }
+
+    const handleUnitPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = Math.max(0, +e.target.value);
+        dispatch(updateUnitPrice({ clientId, lineId, unitPrice: newValue }));
     }
 
     const handleVatChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,6 +51,18 @@ const InvoiceLineForm: React.FC<InvoiceLineFormProps> = ({ clientId, lineId }) =
                 type="number"
                 placeholder="Qty"
                 onChange={handleQuantityChange}
+                sx={{ width: '5rem' }}
+                InputProps={{
+                    style: { borderRadius: '20px' }
+                }}
+            />
+
+            <TextField
+                size="small"
+                value={lineData?.unitPrice == 0 ? '' : lineData?.unitPrice}
+                type="number"
+                placeholder="Price"
+                onChange={handleUnitPriceChange}
                 sx={{ width: '5rem' }}
                 InputProps={{
                     style: { borderRadius: '20px' }

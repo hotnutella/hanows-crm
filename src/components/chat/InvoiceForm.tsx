@@ -23,12 +23,10 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
     const [createInvoiceLine, { isLoading: creatingInvoiceLine }] = useCreateInvoiceLineMutation();
 
     const handleNewLine = () => {
-        dispatch(addLine({ clientId, data: { lineText: '', quantity: 0, vat: 0 } }));
+        dispatch(addLine({ clientId, data: { lineText: '', quantity: 0, unitPrice: 0, vat: 0 } }));
     }
 
     const handlePreview = async () => {
-        const unit_price = 100; // TODO: Add unit price to line data
-
         const response = await createInvoice({
             client_id: clientId,
             invoice_number: `INV-${Math.floor(Math.random() * 1000)}`, // TODO: Replace with actual invoice number
@@ -36,7 +34,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
             due_date: new Date(new Date().setDate(new Date().getDate() + 20)).toISOString(),
             status: 'draft',
             total_amount: Object.values(lines).reduce((acc, line) => {
-                return acc + (line.quantity * unit_price + line.quantity * unit_price * line.vat / 100);
+                return acc + (line.quantity * line.unitPrice + line.quantity * line.unitPrice * line.vat / 100);
             }, 0)
         });
 
@@ -51,7 +49,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
                 invoice_id: invoiceId,
                 description: line.lineText,
                 quantity: line.quantity,
-                unit_price: unit_price,
+                unit_price: line.unitPrice,
                 vat: line.vat
             });
         });

@@ -5,6 +5,7 @@ import { RootState } from '../index';
 interface LineData {
     lineText: string;
     quantity: number;
+    unitPrice: number;
     vat: number;
 }
 
@@ -24,6 +25,10 @@ interface UpdateLinePayload extends LinePayloadBase {
 
 interface LineTextPayload extends LinePayloadBase {
     lineText: string;
+}
+
+interface UnitPricePayload extends LinePayloadBase {
+    unitPrice: number;
 }
 
 interface VatPayload extends LinePayloadBase {
@@ -70,6 +75,10 @@ const messageSlice = createSlice({
             const { clientId, lineId, vat } = action.payload;
             state[clientId].lines[lineId].vat = vat;
         },
+        updateUnitPrice: (state, action: PayloadAction<UnitPricePayload>) => {
+            const { clientId, lineId, unitPrice } = action.payload;
+            state[clientId].lines[lineId].unitPrice = unitPrice;
+        },
         updateQuantity: (state, action: PayloadAction<QuantityPayload>) => {
             const { clientId, lineId, quantity } = action.payload;
             state[clientId].lines[lineId].quantity = quantity;
@@ -94,6 +103,7 @@ export const {
     updateLine,
     updateLineText,
     updateVat,
+    updateUnitPrice,
     updateQuantity,
     resetMessage,
 } = messageSlice.actions;
