@@ -14,7 +14,7 @@ interface ChatPageProps {
 
 const ChatPage: React.FC<ChatPageProps> = ({ params }) => {
     const [formHeight, setFormHeight] = React.useState(0);
-    const { data: client } = useGetClientQuery(params.id);
+    const { data: client, isLoading } = useGetClientQuery(params.id);
 
     return (
         <Box height="100vh">
@@ -25,7 +25,10 @@ const ChatPage: React.FC<ChatPageProps> = ({ params }) => {
                 py={1}
                 zIndex={100}
                 position="relative">
-                <Typography variant="h4">{client?.name}</Typography>
+                <Typography variant="h4">
+                    {!isLoading && client?.name}
+                    {isLoading && <>&nbsp;</>}
+                </Typography>
             </Box>
 
             <ChatContent clientId={+params.id} formHeight={formHeight} />
