@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/store';
 import { setSelectedClient } from '@/store/slices/clientSearchSlice';
 
-interface SelectedClientOptionPageProps {
+export interface SelectedClientOptionPageProps {
     params: {
         id: string;
     };

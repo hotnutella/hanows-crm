@@ -27,8 +27,12 @@ export const invoicesApi = createApi({
       query: (clientId) => `invoices?client_id=eq.${clientId}`,
       providesTags: ['INVOICES']
     }),
-    getInvoice: builder.query({
+    getInvoice: builder.query<Invoice, number>({
       query: (id) => `invoices?id=eq.${id}`,
+      transformResponse: (response: Invoice[]) => {
+        if (!response) return {} as Invoice;
+        return response[0];
+      }
     }),
     createInvoice: builder.mutation<Invoice, Partial<Invoice>>({
       query: (newInvoice) => ({
