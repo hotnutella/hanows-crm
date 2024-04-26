@@ -1,6 +1,14 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Invoice } from './invoicesApi';
 import { prepareHeaders } from './baseQuery';
+import { InvoiceLine } from './invoiceLinesApi';
+import { Client } from './clientsApi';
+
+interface GeneratePdfParams {
+    invoice: Invoice;
+    invoiceLines: InvoiceLine[];
+    client: Client;
+}
 
 export const edgeApi = createApi({
     reducerPath: 'edgeApi',
@@ -14,7 +22,7 @@ export const edgeApi = createApi({
         }
     }),
     endpoints: (builder) => ({
-        generatePdf: builder.mutation<void, Invoice>({
+        generatePdf: builder.mutation<void, GeneratePdfParams>({
             query: (params) => ({
                 url: '/generatePdf',
                 method: 'POST',

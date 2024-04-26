@@ -1,6 +1,7 @@
 // Import PDFDocument from pdf-lib using a CDN that is compatible with Deno
 import { PDFDocument } from 'https://cdn.skypack.dev/pdf-lib@1.16.0';
 import { corsHeaders } from '../_shared/cors.ts';
+import { renderLayout } from './layout.ts';
 
 Deno.serve(async (request: Request): Promise<Response> => {
   // Set up CORS headers
@@ -21,21 +22,15 @@ Deno.serve(async (request: Request): Promise<Response> => {
     // Process POST request to generate and upload PDF
     if (request.method === 'POST') {
       const requestData = await request.json();
-      const invoiceId = requestData.id;
+      const { invoice, invoiceLines, client } = requestData;
 
-      const pdfDoc = await PDFDocument.create();
-      const page = pdfDoc.addPage();
-      const { width, height } = page.getSize();
-      page.drawText(`Invoice ${requestData.invoice_number}`, {
-        x: 50,
-        y: height - 100,
-        size: 25
-      });
-
+      const pdfDoc = await renderLayout(invoice, invoiceLines, client);
       const pdfBytes = await pdfDoc.save();
 
+      const accountId = 1; // Will be replaced with actual account ID
+
       // Create a unique name for the PDF file
-      const fileName = `${Date.now()}.pdf`;
+      const fileName = `${accountId}${invoice.invoice_number}.pdf`;
 
       const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
       const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -59,7 +54,7 @@ Deno.serve(async (request: Request): Promise<Response> => {
       }
 
       // Update the invoice table
-      const updateResponse = await fetch(`${SUPABASE_URL}/rest/v1/invoices?id=eq.${invoiceId}`, {
+      const updateResponse = await fetch(`${SUPABASE_URL}/rest/v1/invoices?id=eq.${invoice.id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

@@ -29,6 +29,10 @@ export const invoiceLinesApi = createApi({
                 method: 'POST',
                 body: invoiceLine,
             }),
+            transformResponse: (response: InvoiceLine[]) => {
+                if (!response) return {} as InvoiceLine;
+                return response[0];
+            },
             invalidatesTags: ['INVOICE_LINES'],
         }),
         updateInvoiceLine: builder.mutation<InvoiceLine, Partial<InvoiceLine>>({
