@@ -26,7 +26,7 @@ Deno.serve(async (request: Request): Promise<Response> => {
       const pdfDoc = await PDFDocument.create();
       const page = pdfDoc.addPage();
       const { width, height } = page.getSize();
-      page.drawText('Hello, this is your PDF!', {
+      page.drawText(`Invoice ${requestData.invoice_number}`, {
         x: 50,
         y: height - 100,
         size: 25
@@ -68,7 +68,7 @@ Deno.serve(async (request: Request): Promise<Response> => {
           'Prefer': 'return=representation'
         },
         body: JSON.stringify({
-          additional_info: { pdf_url: `${SUPABASE_URL}/storage/v1/object/invoice-pdfs/${fileName}` }
+          additional_info: { pdf_url: `${SUPABASE_URL}/storage/v1/object/public/invoice-pdfs/${fileName}` }
         })
       });
 

@@ -2,7 +2,6 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Invoice } from './invoicesApi';
 import { prepareHeaders } from './baseQuery';
 
-// Define your API endpoint
 export const edgeApi = createApi({
     reducerPath: 'edgeApi',
     baseQuery: fetchBaseQuery({
@@ -25,5 +24,4 @@ export const edgeApi = createApi({
     }),
 });
 
-// Export the generated hooks
 export const { useGeneratePdfMutation } = edgeApi;
