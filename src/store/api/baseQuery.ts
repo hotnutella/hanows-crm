@@ -6,13 +6,15 @@ const supabaseHeaders = {
     'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''}`,
 };
 
+export const prepareHeaders = (headers: Headers) => {
+    headers.set('apikey', supabaseHeaders.apikey);
+    headers.set('Authorization', supabaseHeaders.Authorization);
+    headers.set('Prefer', 'return=representation');
+    return headers;
+}
+
 // Define a base query to handle the Supabase headers
 export const baseQuery = fetchBaseQuery({
     baseUrl: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1`,
-    prepareHeaders: (headers) => {
-        headers.set('apikey', supabaseHeaders.apikey);
-        headers.set('Authorization', supabaseHeaders.Authorization);
-        headers.set('Prefer', 'return=representation');
-        return headers;
-    },
+    prepareHeaders,
 });

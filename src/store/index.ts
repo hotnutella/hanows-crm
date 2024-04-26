@@ -6,6 +6,7 @@ import { invoiceLinesApi } from './api/invoiceLinesApi';
 import clientSearchReducer from './slices/clientSearchSlice';
 import messageReducer from './slices/messageSlice';
 import clientReducer from './slices/clientSlice';
+import { edgeApi } from './api/edgeApi';
 
 const rootReducer = combineReducers({
     clientSearch: clientSearchReducer,
@@ -14,6 +15,7 @@ const rootReducer = combineReducers({
     [clientsApi.reducerPath]: clientsApi.reducer,
     [invoicesApi.reducerPath]: invoicesApi.reducer,
     [invoiceLinesApi.reducerPath]: invoiceLinesApi.reducer,
+    [edgeApi.reducerPath]: edgeApi.reducer,
 });
 
 export const store = configureStore({
@@ -22,7 +24,8 @@ export const store = configureStore({
         getDefaultMiddleware()
             .concat(clientsApi.middleware)
             .concat(invoicesApi.middleware)
-            .concat(invoiceLinesApi.middleware),
+            .concat(invoiceLinesApi.middleware)
+            .concat(edgeApi.middleware)
 });
 
 setupListeners(store.dispatch);

@@ -9,6 +9,7 @@ import { addLine, resetMessage, getLines } from '@/store/slices/messageSlice'
 import { useCreateInvoiceMutation } from '@/store/api/invoicesApi'
 import { useCreateInvoiceLineMutation } from '@/store/api/invoiceLinesApi'
 import { getInvoiceNumber } from '@/store/slices/clientSlice'
+import { useGeneratePdfMutation } from '@/store/api/edgeApi'
 
 interface InvoiceFormProps {
     clientId: number
@@ -23,6 +24,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
 
     const [createInvoice, { isLoading: creatingInvoice }] = useCreateInvoiceMutation();
     const [createInvoiceLine, { isLoading: creatingInvoiceLine }] = useCreateInvoiceLineMutation();
+    const [generatePdf, { isLoading: generatingPdf }] = useGeneratePdfMutation();
 
     const handleNewLine = () => {
         dispatch(addLine({ clientId, data: { lineText: '', quantity: 0, unitPrice: 0, vat: 0 } }));
@@ -55,8 +57,9 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
                 vat: line.vat
             });
         });
+        generatePdf(response.data);
         dispatch(resetMessage(clientId));
-        handleNewLine();        
+        handleNewLine();
     }
 
     useEffect(() => {
