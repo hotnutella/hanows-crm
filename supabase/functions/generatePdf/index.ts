@@ -20,6 +20,9 @@ Deno.serve(async (request: Request): Promise<Response> => {
   try {
     // Process POST request to generate and upload PDF
     if (request.method === 'POST') {
+      const requestData = await request.json();
+      const invoiceId = requestData.id;
+
       const pdfDoc = await PDFDocument.create();
       const page = pdfDoc.addPage();
       const { width, height } = page.getSize();
@@ -41,7 +44,7 @@ Deno.serve(async (request: Request): Promise<Response> => {
       const formData = new FormData();
       formData.append("file", new Blob([pdfBytes], { type: "application/pdf" }), fileName);
 
-      const response = await fetch(`${SUPABASE_URL}/storage/v1/object/invoice-pdfs/${fileName}`, {
+      const storageData = await fetch(`${SUPABASE_URL}/storage/v1/object/invoice-pdfs/${fileName}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
@@ -50,9 +53,28 @@ Deno.serve(async (request: Request): Promise<Response> => {
         body: formData
       });
 
-      const data = await response.json();
-      if (!response.ok) {
+      const data = await storageData.json();
+      if (!storageData.ok) {
         throw new Error(data.error.message || 'Failed to upload PDF');
+      }
+
+      // Update the invoice table
+      const updateResponse = await fetch(`${SUPABASE_URL}/rest/v1/invoices?id=eq.${invoiceId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+          'apiKey': `${SUPABASE_SERVICE_ROLE_KEY}`,
+          'Prefer': 'return=representation'
+        },
+        body: JSON.stringify({
+          additional_info: { pdf_url: `${SUPABASE_URL}/storage/v1/object/invoice-pdfs/${fileName}` }
+        })
+      });
+
+      const updateData = await updateResponse.json();
+      if (!updateResponse.ok) {
+        throw new Error(updateData.error.message || 'Failed to update invoice');
       }
 
       // Respond with the URL of the uploaded PDF

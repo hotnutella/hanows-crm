@@ -12,7 +12,9 @@ export interface Invoice {
   paid_amount: number;
   created_at: Date;
   updated_at: Date;
-  additional_info: JSON;
+  additional_info: {
+    pdf_url: string;
+  };
 }
 
 export const invoicesApi = createApi({
