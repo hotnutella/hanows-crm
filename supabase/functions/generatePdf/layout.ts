@@ -200,7 +200,7 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
     x = right - defaultFieldWidth - largeFieldWidth;
     page.drawText(txt, {
         x: alignRight(x, txt, largeFieldWidth, helvetica),
-        y: top - 225 - (invoiceLines.length + 1) * 20,
+        y: top - 225 - (invoiceLines.length + 2) * 20,
         size: 12,
         font: helvetica,
         bold: true,
@@ -211,7 +211,7 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
     x += largeFieldWidth;
     page.drawText(txt, {
         x: alignRight(x, txt, defaultFieldWidth, helvetica),
-        y: top - 225 - (invoiceLines.length + 1) * 20,
+        y: top - 225 - (invoiceLines.length + 2) * 20,
         size: 12,
         font: helvetica,
         bold: true,
@@ -223,7 +223,7 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
         x = right - defaultFieldWidth - largeFieldWidth;
         page.drawText(txt, {
             x: alignRight(x, txt, largeFieldWidth, helvetica),
-            y: top - 225 - (invoiceLines.length + 2 + Number(i)) * 20,
+            y: top - 225 - (invoiceLines.length + 3 + Number(i)) * 20,
             size: 12,
             font: helvetica,
             bold: true,
@@ -239,7 +239,7 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
         x += largeFieldWidth;
         page.drawText(txt, {
             x: alignRight(x, txt, defaultFieldWidth, helvetica),
-            y: top - 225 - (invoiceLines.length + 2 + Number(i)) * 20,
+            y: top - 225 - (invoiceLines.length + 3 + Number(i)) * 20,
             size: 12,
             font: helvetica,
             bold: true,
@@ -250,7 +250,7 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
     x = right - defaultFieldWidth - largeFieldWidth;
     page.drawText(txt, {
         x: alignRight(x, txt, largeFieldWidth, helveticaBold, 14),
-        y: top - 225 - (invoiceLines.length + 2 + distinctVats.length) * 20,
+        y: top - 225 - (invoiceLines.length + 3 + distinctVats.length) * 20,
         size: 14,
         font: helveticaBold,
         bold: true,
@@ -261,10 +261,17 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
     x += largeFieldWidth;
     page.drawText(txt, {
         x: alignRight(x, txt, defaultFieldWidth, helveticaBold, 14),
-        y: top - 225 - (invoiceLines.length + 2 + distinctVats.length) * 20,
+        y: top - 225 - (invoiceLines.length + 3 + distinctVats.length) * 20,
         size: 14,
         font: helveticaBold,
         bold: true,
+    });
+
+    txt = 'PLEASE PROVIDE INVOICE NUMBER IN PAYMENT DETAILS';
+    page.drawText(txt, {
+        x: left,
+        y: top - 225 - (invoiceLines.length + 3 + distinctVats.length + 3) * 20,
+        size: 10,
     });
 
 

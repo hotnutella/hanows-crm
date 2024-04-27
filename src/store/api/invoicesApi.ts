@@ -27,6 +27,9 @@ export const invoicesApi = createApi({
     }),
     getInvoicesByClient: builder.query<Invoice[], number>({
       query: (clientId) => `invoices?client_id=eq.${clientId}`,
+      transformResponse: (response: Invoice[]) => {
+        return response.sort((a, b) => a.invoice_number.localeCompare(b.invoice_number));
+      },
       providesTags: ['INVOICES']
     }),
     getInvoice: builder.query<Invoice, number>({
