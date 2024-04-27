@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useGetInvoiceQuery } from '@/store/api/invoicesApi';
+import ChatHeader from '@/components/chat/ChatHeader';
 
 interface InvoicePageProps {
     params: {
@@ -11,11 +12,12 @@ interface InvoicePageProps {
 }
 
 const InvoicePage: React.FC<InvoicePageProps> = ({ params }) => {
-    const { invoice_id } = params;
+    const { id, invoice_id } = params;
     const { data: invoice } = useGetInvoiceQuery(+invoice_id);
 
     return (
         <>
+            <ChatHeader clientId={+id} showBackButton={true} />
             {invoice && (
                 <iframe src={invoice.additional_info.pdf_url} style={{ width: '100%', height: '100%' }} />
             )}
