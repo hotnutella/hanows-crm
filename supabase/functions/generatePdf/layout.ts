@@ -3,6 +3,11 @@ import { InvoiceLine } from '@/store/api/invoiceLinesApi';
 import { Client } from '@/store/api/clientsApi';
 import { PDFDocument, StandardFonts } from 'https://cdn.skypack.dev/pdf-lib@1.16.0';
 
+const alignRight = (x: number, text: string, fieldWidth: number, font: typeof StandardFonts) => {
+    const width = font.widthOfTextAtSize(text, 12);
+    return x + fieldWidth - width;
+}
+
 export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[], client: Client) => {
     const pdfDoc = await PDFDocument.create();
     const page = pdfDoc.addPage();
@@ -12,8 +17,11 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
     const bottom = 80;
     const left = 50;
     const right = width - 50;
+    const lineThickness = 0.75;
+    const defaultFieldWidth = 60;
 
     const companyName = 'Hanows OÜ'; // TODO: replace with actual company name
+    const helvetica = pdfDoc.embedStandardFont(StandardFonts.Helvetica);
     const helveticaBold = pdfDoc.embedStandardFont(StandardFonts.HelveticaBold);
 
     page.drawText(companyName, {
@@ -81,32 +89,36 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
         bold: true,
     });
 
+    let x = right - 4 * defaultFieldWidth;
     page.drawText('Price', {
-        x: right - 240,
+        x: alignRight(x, 'Price', defaultFieldWidth, helveticaBold),
         y: top - 220,
         size: 12,
         font: helveticaBold,
         bold: true,
     });
     
+    x += defaultFieldWidth;
     page.drawText('Quantity', {
-        x: right - 170,
+        x: alignRight(x, 'Quantity', defaultFieldWidth, helveticaBold),
         y: top - 220,
         size: 12,
         font: helveticaBold,
         bold: true,
     });
 
+    x += defaultFieldWidth;
     page.drawText('VAT', {
-        x: right - 100,
+        x: alignRight(x, 'VAT', defaultFieldWidth, helveticaBold),
         y: top - 220,
         size: 12,
         font: helveticaBold,
         bold: true,
     });
 
+    x += defaultFieldWidth;
     page.drawText('Total', {
-        x: right - 60,
+        x: alignRight(x, 'Total', defaultFieldWidth, helveticaBold),
         y: top - 220,
         size: 12,
         font: helveticaBold,
@@ -116,7 +128,7 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
     page.drawLine({
         start: { x: left, y: top - 225 },
         end: { x: right, y: top - 225 },
-        thickness: 1,
+        thickness: lineThickness,
     });
 
     for (const [i, line] of Object.entries(invoiceLines)) {
@@ -128,28 +140,32 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
             size: 12,
         });
 
+        x = right - 4 * defaultFieldWidth;
         page.drawText(`${line.unit_price}`, {
-            x: right - 240,
+            x: alignRight(x, `${line.unit_price}`, defaultFieldWidth, helvetica),
             y,
             size: 12,
         });
 
+        x += defaultFieldWidth;
         page.drawText(`${line.quantity}`, {
-            x: right - 170,
+            x: alignRight(x, `${line.quantity}`, defaultFieldWidth, helvetica),
             y,
             size: 12,
             textAlign: 'right',
         });
 
+        x += defaultFieldWidth;
         page.drawText(`${line.vat}%`, {
-            x: right - 100,
+            x: alignRight(x, `${line.vat}%`, defaultFieldWidth, helvetica),
             y,
             size: 12,
         });
 
-        const total = Math.round(line.quantity * line.unit_price + line.quantity * line.unit_price * line.vat / 100);
-        page.drawText(`${total}`, {
-            x: right - 60,
+        const total = (line.quantity * line.unit_price + line.quantity * line.unit_price * line.vat / 100).toFixed(2);
+        x += defaultFieldWidth;
+        page.drawText(total, {
+            x: alignRight(x, total, defaultFieldWidth, helvetica),
             y,
             size: 12,
         });
@@ -158,7 +174,7 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
     page.drawLine({
         start: { x: left, y: top - 225 - invoiceLines.length * 20 },
         end: { x: right, y: top - 225 - invoiceLines.length * 20 },
-        thickness: 1,
+        thickness: lineThickness,
     });
 
 
@@ -166,7 +182,7 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
     page.drawLine({
         start: { x: left, y: bottom },
         end: { x: right, y: bottom },
-        thickness: 1,
+        thickness: lineThickness,
     });
 
     return pdfDoc;
