@@ -8,7 +8,7 @@ import { AppDispatch, RootState } from '@/store'
 import { addLine, resetMessage, getLines } from '@/store/slices/messageSlice'
 import { useCreateInvoiceMutation } from '@/store/api/invoicesApi'
 import { InvoiceLine, useCreateInvoiceLineMutation } from '@/store/api/invoiceLinesApi'
-import { getInvoiceNumber } from '@/store/slices/clientSlice'
+import { getInvoiceNumber } from '@/store/slices/accountSlice'
 import { useGeneratePdfMutation } from '@/store/api/edgeApi'
 import { useGetClientQuery } from '@/store/api/clientsApi'
 
@@ -20,7 +20,7 @@ interface InvoiceFormProps {
 const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clientId, onHeightChange }) {
     const ref = React.useRef<HTMLDivElement | null>(null);
     const lines = useSelector((state: RootState) => getLines(state, clientId));
-    const invoiceNumber = useSelector((state: RootState) => getInvoiceNumber(state, clientId));
+    const invoiceNumber = useSelector(getInvoiceNumber);
     const dispatch = useDispatch<AppDispatch>();
 
     const { data: client } = useGetClientQuery(String(clientId));
@@ -64,7 +64,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
                 unit_price: line.unitPrice,
                 vat: line.vat
             });
-            
+
             if ('data' in savedLine) {
                 invoiceLines.push(savedLine.data);
             }

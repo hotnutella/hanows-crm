@@ -6,9 +6,11 @@ import { invoiceLinesApi } from './api/invoiceLinesApi';
 import clientSearchReducer from './slices/clientSearchSlice';
 import messageReducer from './slices/messageSlice';
 import clientReducer from './slices/clientSlice';
+import accountReducer from './slices/accountSlice';
 import { edgeApi } from './api/edgeApi';
 
 const rootReducer = combineReducers({
+    account: accountReducer,
     clientSearch: clientSearchReducer,
     message: messageReducer,
     client: clientReducer,

@@ -23,7 +23,14 @@ export const invoicesApi = createApi({
   tagTypes: ['INVOICES'],
   endpoints: (builder) => ({
     getInvoices: builder.query<Invoice[], void>({
-      query: () => 'invoices',
+      query: () => {
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth() + 1;
+        const currentYear = currentDate.getFullYear();
+        const startDate = `${currentYear}-${currentMonth}-01`;
+        const endDate = `${currentYear}-${currentMonth + 1}-01`;
+        return `invoices?issue_date=gte.${startDate}&issue_date=lt.${endDate}`;
+      },
     }),
     getInvoicesByClient: builder.query<Invoice[], number>({
       query: (clientId) => `invoices?client_id=eq.${clientId}`,
