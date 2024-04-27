@@ -1,10 +1,18 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQuery } from '@/store/api/baseQuery';
 
+interface Address {
+  line1: string;
+  line2: string;
+  country: string;
+}
+
 export interface Client {
   id: number;
   name: string;
   email: string;
+  address: Address;
+  phone: string;
   created_at: Date;
   additional_info: JSON;
 }
