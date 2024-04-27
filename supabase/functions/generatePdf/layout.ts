@@ -392,5 +392,56 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
         thickness: lineThickness,
     });
 
+    // Company block
+    y = bottom - 12;
+    txt = companyName;
+    page.drawText(txt, {
+        x: left,
+        y,
+        size: 10,
+    });
+
+    y -= 12;
+    txt = 'Kivimurru 7-12, 11411, Tallinn'; // TODO: replace with actual company address
+    page.drawText(txt, {
+        x: left,
+        y,
+        size: 10,
+    });
+
+    y -= 12;
+    txt = 'Reg number: 12871527'; // TODO: replace with actual company reg number
+    page.drawText(txt, {
+        x: left,
+        y,
+        size: 10,
+    });
+
+    y -= 12;
+    txt = 'VAT number: EE102714100'; // TODO: replace with actual company VAT number
+    page.drawText(txt, {
+        x: left,
+        y,
+        size: 10,
+    });
+
+    // Contact block
+    y = bottom - 12;
+    x = right - largeFieldWidth;
+    txt = 'E-mail: deniss.suhhanov@gmail.com'; // TODO: replace with actual company email
+    page.drawText(txt, {
+        x: alignRight(x, txt, largeFieldWidth, helvetica, 10),
+        y,
+        size: 10,
+    });
+
+    y -= 12;
+    txt = 'Phone: +372 xxxxxxxx'; // TODO: replace with actual company phone number
+    page.drawText(txt, {
+        x: alignRight(x, txt, largeFieldWidth, helvetica, 10),
+        y,
+        size: 10,
+    });
+
     return pdfDoc;
 }
