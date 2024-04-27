@@ -8,6 +8,11 @@ const alignRight = (x: number, text: string, fieldWidth: number, font: typeof St
     return x + fieldWidth - width;
 }
 
+const formatDate = (date: string) => {
+    const [year, month, day] = date.split('-');
+    return `${day}.${month}.${year}`;
+}
+
 export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[], client: Client) => {
     const pdfDoc = await PDFDocument.create();
     const page = pdfDoc.addPage();
@@ -19,22 +24,26 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
     const right = width - 50;
     const lineThickness = 0.75;
     const defaultFieldWidth = 60;
+    const mediumFieldWidth = 100;
     const largeFieldWidth = 180;
 
     const companyName = 'Hanows OÜ'; // TODO: replace with actual company name
     const helvetica = pdfDoc.embedStandardFont(StandardFonts.Helvetica);
     const helveticaBold = pdfDoc.embedStandardFont(StandardFonts.HelveticaBold);
 
+    
+    let x = left;
     let y = top;
     let txt = companyName;
     page.drawText(txt, {
-        x: left,
+        x,
         y,
         size: 24,
         font: helveticaBold,
         bold: true,
     });
 
+    // Client block
     y -= 30;
     txt = 'Client:'
     page.drawText(txt, {
@@ -94,6 +103,101 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
         size: 10,
     });
 
+    // Invoice block
+    y = top - 30;
+    x = right - 2 * mediumFieldWidth;
+    txt = 'Invoice nr:';
+    page.drawText(txt, {
+        x,
+        y,
+        size: 14,
+        font: helveticaBold,
+        bold: true,
+    });
+
+    txt = invoice.invoice_number;
+    x += mediumFieldWidth;
+    page.drawText(txt, {
+        x: alignRight(x, txt, mediumFieldWidth, helveticaBold, 14),
+        y,
+        size: 14,
+        font: helveticaBold,
+        bold: true,
+    });
+
+    y -= 20;
+    x = right - 2 * mediumFieldWidth;
+    txt = 'Date:';
+    page.drawText(txt, {
+        x,
+        y,
+        size: 12,
+    });
+
+    txt = formatDate(invoice.issue_date);
+    x += mediumFieldWidth;
+    page.drawText(txt, {
+        x: alignRight(x, txt, mediumFieldWidth, helvetica),
+        y,
+        size: 12,
+    });
+
+    y -= 20;
+    x = right - 2 * mediumFieldWidth;
+    txt = 'Terms:';
+    page.drawText(txt, {
+        x,
+        y,
+        size: 12,
+    });
+
+    // calculate days between issue and due date
+    const days = Math.floor((new Date(invoice.due_date).getTime() - new Date(invoice.issue_date).getTime()) / (1000 * 60 * 60 * 24));
+    txt = `${days} days`;
+    x += mediumFieldWidth;
+    page.drawText(txt, {
+        x: alignRight(x, txt, mediumFieldWidth, helvetica),
+        y,
+        size: 12,
+    });
+
+    y -= 20;
+    x = right - 2 * mediumFieldWidth;
+    txt = 'Due date:';
+    page.drawText(txt, {
+        x,
+        y: y,
+        size: 12,
+        font: helveticaBold,
+        bold: true,
+    });
+
+    txt = formatDate(invoice.due_date);
+    x += mediumFieldWidth;
+    page.drawText(txt, {
+        x: alignRight(x, txt, mediumFieldWidth, helveticaBold),
+        y: y,
+        size: 12,
+        font: helveticaBold,
+        bold: true,
+    });
+
+    y -= 20;
+    x = right - 2 * mediumFieldWidth;
+    txt = 'Penalty:';
+    page.drawText(txt, {
+        x,
+        y,
+        size: 12,
+    });
+
+    txt = '0.05% per day';
+    x += mediumFieldWidth;
+    page.drawText(txt, {
+        x: alignRight(x, txt, mediumFieldWidth, helvetica),
+        y,
+        size: 12,
+    });
 
     y = top - 220;
     // Line titles
@@ -107,7 +211,7 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
     });
 
     txt = 'Price';
-    let x = right - 4 * defaultFieldWidth;
+    x = right - 4 * defaultFieldWidth;
     page.drawText(txt, {
         x: alignRight(x, txt, defaultFieldWidth, helveticaBold),
         y,
