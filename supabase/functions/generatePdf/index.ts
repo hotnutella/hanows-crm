@@ -50,6 +50,7 @@ Deno.serve(async (request: Request): Promise<Response> => {
 
       const data = await storageData.json();
       if (!storageData.ok) {
+        console.log(storageData);
         throw new Error(data.error.message || 'Failed to upload PDF');
       }
 

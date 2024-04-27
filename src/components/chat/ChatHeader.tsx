@@ -1,5 +1,5 @@
 import { useGetClientQuery } from '@/store/api/clientsApi';
-import { Box, Fab, IconButton, Stack, Typography } from '@mui/material';
+import { Box, Fab, IconButton, Stack, Tooltip, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import React from 'react';
@@ -12,7 +12,7 @@ interface ChatHeaderProps {
 const ChatHeader: React.FC<ChatHeaderProps> = ({ clientId, showBackButton }) => {
     const { data: client, isLoading } = useGetClientQuery(String(clientId));
     const router = useRouter();
-
+    
     return (
         <Stack
             direction="row"
@@ -45,9 +45,14 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ clientId, showBackButton }) => 
                 )}
             </Stack>
             <Box height={5}>
-                <IconButton color="primary" onClick={() => router.push(`/${clientId}/details`)}>
-                    <MoreHorizIcon />
-                </IconButton>
+                <Tooltip title="Client details">
+                    <IconButton
+                        color="primary"
+                        onClick={() => router.push(`/${clientId}/details`)}
+                    >
+                        <MoreHorizIcon />
+                    </IconButton>
+                </Tooltip>
             </Box>
         </Stack>
     );
