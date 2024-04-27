@@ -25,76 +25,82 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
     const helvetica = pdfDoc.embedStandardFont(StandardFonts.Helvetica);
     const helveticaBold = pdfDoc.embedStandardFont(StandardFonts.HelveticaBold);
 
+    let y = top;
     let txt = companyName;
     page.drawText(txt, {
         x: left,
-        y: top,
+        y,
         size: 24,
         font: helveticaBold,
         bold: true,
     });
 
-    txt = `Invoice ${invoice.invoice_number}`;
-    page.drawText(`Invoice ${invoice.invoice_number}`, {
-        x: left,
-        y: top - 30,
-        size: 12,
-    });
-
-    txt = `Invoice date: ${invoice.issue_date}`;
+    y -= 30;
+    txt = 'Client:'
     page.drawText(txt, {
         x: left,
-        y: top - 50,
-        size: 12,
+        y,
+        size: 10,
     });
 
-    txt = `Due date: ${invoice.due_date}`;
+    y -= 15;
+    txt = client.name;
+    txt = client.name || '';
     page.drawText(txt, {
         x: left,
-        y: top - 70,
-        size: 12,
+        y,
+        size: 10,
+        font: helveticaBold,
+        bold: true,
     });
 
-    txt = `Total: ${invoice.total_amount}`;
+    y -= 15;
+    txt = client?.address?.line1 || '[Address line 1 placeholder]';
     page.drawText(txt, {
         x: left,
-        y: top - 90,
-        size: 12,
+        y,
+        size: 10,
     });
 
-    txt = `Status: ${invoice.status}`;
+    y -= 15;
+    txt = client?.address?.line2 || '[Address line 2 placeholder]';
     page.drawText(txt, {
         x: left,
-        y: top - 120,
-        size: 12,
+        y,
+        size: 10,
     });
 
-    txt = `Client: ${client.name || ''}`;
+    y -= 15;
+    txt = client?.address?.country || '[Country placeholder]';
     page.drawText(txt, {
         x: left,
-        y: top - 140,
-        size: 12,
+        y,
+        size: 10,
     });
 
-    txt = `Email: ${client.email || ''}`;
+    y -= 15;
+    txt = `Reg number: ${client.reg_number || '[Reg number placeholder]'}`;
     page.drawText(txt, {
         x: left,
-        y: top - 160,
-        size: 12,
+        y,
+        size: 10,
     });
 
-    txt = `Phone: ${client.phone || ''}`;
+    y -= 15;
+    txt = `VAT number: ${client.vat_number || '[VAT number placeholder]'}`;
     page.drawText(txt, {
         x: left,
-        y: top - 180,
-        size: 12,
+        y,
+        size: 10,
     });
 
+
+    y = top - 220;
     // Line titles
     txt = 'Description';
     page.drawText(txt, {
         x: left,
-        y: top - 220,
+        y,
         size: 12,
         font: helveticaBold,
         bold: true,
@@ -104,7 +110,7 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
     let x = right - 4 * defaultFieldWidth;
     page.drawText(txt, {
         x: alignRight(x, txt, defaultFieldWidth, helveticaBold),
-        y: top - 220,
+        y,
         size: 12,
         font: helveticaBold,
         bold: true,
@@ -114,7 +120,7 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
     x += defaultFieldWidth;
     page.drawText(txt, {
         x: alignRight(x, txt, defaultFieldWidth, helveticaBold),
-        y: top - 220,
+        y,
         size: 12,
         font: helveticaBold,
         bold: true,
@@ -124,7 +130,7 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
     x += defaultFieldWidth;
     page.drawText(txt, {
         x: alignRight(x, txt, defaultFieldWidth, helveticaBold),
-        y: top - 220,
+        y,
         size: 12,
         font: helveticaBold,
         bold: true,
@@ -134,7 +140,7 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
     x += defaultFieldWidth;
     page.drawText(txt, {
         x: alignRight(x, txt, defaultFieldWidth, helveticaBold),
-        y: top - 220,
+        y,
         size: 12,
         font: helveticaBold,
         bold: true,
@@ -147,7 +153,7 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
     });
 
     for (const [i, line] of Object.entries(invoiceLines)) {
-        const y = top - 240 - Number(i) * 20;
+        y = top - 240 - Number(i) * 20;
 
         txt = line.description;
         page.drawText(txt, {
