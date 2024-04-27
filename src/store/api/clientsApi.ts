@@ -20,6 +20,7 @@ export interface Client {
 export const clientsApi = createApi({
   reducerPath: 'clientsApi',
   baseQuery: baseQuery,
+  tagTypes: ['CLIENTS'],
   endpoints: (builder) => ({
     getClients: builder.query<Client[], void>({
       query: () => 'clients',
@@ -30,6 +31,7 @@ export const clientsApi = createApi({
         if (!response) return {} as Client;
         return response[0];
       },
+      providesTags: ['CLIENTS'],
     }),
     createClient: builder.mutation({
       query: (newClient) => ({
@@ -37,6 +39,7 @@ export const clientsApi = createApi({
         method: 'POST',
         body: newClient,
       }),
+      invalidatesTags: ['CLIENTS'],
     }),
     updateClient: builder.mutation({
       query: ({ id, ...update }) => ({
@@ -44,12 +47,14 @@ export const clientsApi = createApi({
         method: 'PATCH',
         body: update,
       }),
+      invalidatesTags: ['CLIENTS'],
     }),
     deleteClient: builder.mutation({
       query: (id) => ({
         url: `clients?id=eq.${id}`,
         method: 'DELETE',
       }),
+      invalidatesTags: ['CLIENTS'],
     }),
   }),
 });
