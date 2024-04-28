@@ -16,6 +16,8 @@ interface DetailsContentProps {
 const ClientDetails: React.FC<DetailsContentProps> = ({ clientId }) => {
     const { data: client } = useGetClientQuery(String(clientId));
     const [clientName, setClientName] = React.useState('');
+    const [clientRegNumber, setClientRegNumber] = React.useState('');
+    const [clientVatNumber, setClientVatNumber] = React.useState('');
     const [clientEmail, setClientEmail] = React.useState('');
     const [clientPhone, setClientPhone] = React.useState('');
     const [clientAddressLine1, setClientAddressLine1] = React.useState('');
@@ -27,6 +29,8 @@ const ClientDetails: React.FC<DetailsContentProps> = ({ clientId }) => {
     useEffect(() => {
         if (client) {
             setClientName(client.name);
+            setClientRegNumber(client.reg_number);
+            setClientVatNumber(client.vat_number);
             setClientEmail(client.email);
             setClientPhone(client.phone);
             setClientAddressLine1(client.address?.line1 || '');
@@ -46,6 +50,8 @@ const ClientDetails: React.FC<DetailsContentProps> = ({ clientId }) => {
         const submitData = {
             ...client,
             name: clientName,
+            reg_number: clientRegNumber,
+            vat_number: clientVatNumber,
             email: clientEmail,
             phone: clientPhone,
             address: {
@@ -75,6 +81,18 @@ const ClientDetails: React.FC<DetailsContentProps> = ({ clientId }) => {
                                     label="Name"
                                     value={clientName}
                                     onChange={(e) => setClientName(e.target.value)}
+                                    fullWidth />
+
+                                <TextField
+                                    label="Reg number"
+                                    value={clientRegNumber}
+                                    onChange={(e) => setClientRegNumber(e.target.value)}
+                                    fullWidth />
+
+                                <TextField
+                                    label="VAT number"
+                                    value={clientVatNumber}
+                                    onChange={(e) => setClientVatNumber(e.target.value)}
                                     fullWidth />
 
                                 <TextField

@@ -14,6 +14,8 @@ export interface Client {
   address: Address;
   phone: string;
   created_at: Date;
+  reg_number: string;
+  vat_number: string;
   additional_info: JSON;
 }
 
