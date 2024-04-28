@@ -3,8 +3,10 @@ import { Box, Paper, Stack, Typography } from '@mui/material';
 import React from 'react';
 import styles from './InvoiceMessage.module.css';
 import { useGetInvoiceLinesByInvoiceQuery } from '@/store/api/invoiceLinesApi';
-import { useGeneratePdfMutation } from '@/store/api/edgeApi';
 import { useRouter } from 'next/navigation';
+import { useSelector } from 'react-redux';
+import { getIsGeneratingPdf } from '@/store/slices/messageSlice';
+import { RootState } from '@/store';
 
 interface InvoiceMessageProps {
     invoice: Invoice;
@@ -12,7 +14,7 @@ interface InvoiceMessageProps {
 
 const InvoiceMessage: React.FC<InvoiceMessageProps> = ({ invoice }) => {
     const { data: invoiceLines } = useGetInvoiceLinesByInvoiceQuery(invoice.id);
-    const [, { isLoading: isGeneratingPdf}] = useGeneratePdfMutation();
+    const isGeneratingPdf = useSelector((state: RootState) => getIsGeneratingPdf(state, invoice.id));
     const router = useRouter();
 
     const className = isGeneratingPdf ? `${styles.invoice} ${styles.disabled}` : styles.invoice;

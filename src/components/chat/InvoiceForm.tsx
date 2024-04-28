@@ -5,7 +5,7 @@ import AddIcon from '@mui/icons-material/Add'
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@/store'
-import { addLine, resetMessage, getLines } from '@/store/slices/messageSlice'
+import { addLine, resetMessage, getLines, addToGeneratingInvoicesList, removeFromGeneratingInvoicesList } from '@/store/slices/messageSlice'
 import { useCreateInvoiceMutation } from '@/store/api/invoicesApi'
 import { InvoiceLine, useCreateInvoiceLineMutation } from '@/store/api/invoiceLinesApi'
 import { getInvoiceNumber } from '@/store/slices/accountSlice'
@@ -71,7 +71,10 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
             }
         }));
         
-        generatePdf({ invoice: savedInvoice.data, invoiceLines, client });
+        dispatch(addToGeneratingInvoicesList(invoiceId));
+        await generatePdf({ invoice: savedInvoice.data, invoiceLines, client });
+        dispatch(removeFromGeneratingInvoicesList(invoiceId));
+
         dispatch(resetMessage(clientId));
         handleNewLine();
         bumpClient(client);

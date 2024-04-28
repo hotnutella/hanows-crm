@@ -39,15 +39,23 @@ interface QuantityPayload extends LinePayloadBase {
     quantity: number;
 }
 
+interface IsGeneratingPdfPayload {
+    clientId: number;
+    value: boolean;
+}
+
 interface MessageState {
     [clientId: number]: {
         lines: {
             [key: number]: LineData;
         },
-    }
+    },
+    generatingInvoices: number[];
 }
 
-const initialState: MessageState = {};
+const initialState: MessageState = {
+    generatingInvoices: [],
+};
 
 const messageSlice = createSlice({
     name: 'message',
@@ -86,6 +94,12 @@ const messageSlice = createSlice({
         resetMessage: (state, action: PayloadAction<number>) => {
             delete state[action.payload];
         },
+        addToGeneratingInvoicesList: (state, action: PayloadAction<number>) => {
+            state.generatingInvoices.push(action.payload)
+        },
+        removeFromGeneratingInvoicesList: (state, action: PayloadAction<number>) => {
+            state.generatingInvoices = state.generatingInvoices.filter((id) => id !== action.payload);
+        }
     },
 });
 
@@ -98,6 +112,10 @@ export const getLines = createSelector(
     (lines) => lines || {}
 )
 
+export const getIsGeneratingPdf = (state: RootState, invoiceId: number) => {
+    return state.message.generatingInvoices.includes(invoiceId);
+}
+
 export const { 
     addLine,
     updateLine,
@@ -106,5 +124,7 @@ export const {
     updateUnitPrice,
     updateQuantity,
     resetMessage,
+    addToGeneratingInvoicesList,
+    removeFromGeneratingInvoicesList,
 } = messageSlice.actions;
 export default messageSlice.reducer;
