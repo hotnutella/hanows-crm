@@ -19,7 +19,7 @@ const InvoicePage: React.FC<InvoicePageProps> = ({ params }) => {
         <>
             <ChatHeader clientId={+id} showBackButton={true} />
             {invoice && (
-                <iframe src={invoice.additional_info.pdf_url} style={{ width: '100%', height: '100%' }} />
+                <iframe src={invoice.additional_info.pdf_url} style={{ width: '100%', height: 'calc(100vh - 58px)' }} />
             )}
         </>
     );
