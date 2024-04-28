@@ -31,6 +31,7 @@ export const invoicesApi = createApi({
         const endDate = `${currentYear}-${currentMonth + 1}-01`;
         return `invoices?issue_date=gte.${startDate}&issue_date=lt.${endDate}`;
       },
+      providesTags: ['INVOICES']
     }),
     getInvoicesByClient: builder.query<Invoice[], number>({
       query: (clientId) => `invoices?client_id=eq.${clientId}`,

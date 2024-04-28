@@ -16,6 +16,7 @@ export interface Client {
   created_at: Date;
   reg_number: string;
   vat_number: string;
+  last_interaction: Date;
   additional_info: JSON;
 }
 
@@ -26,6 +27,9 @@ export const clientsApi = createApi({
   endpoints: (builder) => ({
     getClients: builder.query<Client[], void>({
       query: () => 'clients',
+      transformResponse: (response: Client[]) => {
+        return response.sort((a, b) => new Date(b.last_interaction).getTime() - new Date(a.last_interaction).getTime());
+      },
       providesTags: ['CLIENTS'],
     }),
     getClient: builder.query<Client, string>({
@@ -63,14 +67,26 @@ export const clientsApi = createApi({
       }),
       invalidatesTags: ['CLIENTS'],
     }),
+    bump: builder.mutation<void, Client>({
+      query: ({ id, ...update }) => ({
+        url: `clients?id=eq.${id}`,
+        method: 'PATCH',
+        body: {
+          ...update,
+          last_interaction: 'now()',
+        },
+      }),
+      invalidatesTags: ['CLIENTS'],
+    }),
   }),
 });
 
-export const { 
+export const {
   useGetClientsQuery,
   useGetClientQuery,
   useLazyGetClientQuery,
   useCreateClientMutation,
   useUpdateClientMutation,
   useDeleteClientMutation,
- } = clientsApi;
+  useBumpMutation,
+} = clientsApi;

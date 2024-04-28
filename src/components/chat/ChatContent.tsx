@@ -23,7 +23,7 @@ const ChatContent: React.FC<ChatContentProps> = (props) => {
 
     useEffect(() => {
         dispatch(setInvoiceCount(allInvoices?.length || 0));
-    }, [invoices, props.clientId, dispatch]);
+    }, [allInvoices, props.clientId, dispatch]);
 
     return (
         <Box

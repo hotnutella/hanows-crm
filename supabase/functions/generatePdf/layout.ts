@@ -31,7 +31,7 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
     const helvetica = pdfDoc.embedStandardFont(StandardFonts.Helvetica);
     const helveticaBold = pdfDoc.embedStandardFont(StandardFonts.HelveticaBold);
 
-    
+
     let x = left;
     let y = top;
     let txt = companyName;
@@ -63,45 +63,55 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
         bold: true,
     });
 
-    y -= 15;
-    txt = client?.address?.line1 || '[Address line 1 placeholder]';
-    page.drawText(txt, {
-        x: left,
-        y,
-        size: 10,
-    });
+    if (client.address?.line1) {
+        y -= 15;
+        txt = client?.address?.line1 || '[Address line 1 placeholder]';
+        page.drawText(txt, {
+            x: left,
+            y,
+            size: 10,
+        });
+    }
 
-    y -= 15;
-    txt = client?.address?.line2 || '[Address line 2 placeholder]';
-    page.drawText(txt, {
-        x: left,
-        y,
-        size: 10,
-    });
+    if (client.address?.line2) {
+        y -= 15;
+        txt = client?.address?.line2 || '[Address line 2 placeholder]';
+        page.drawText(txt, {
+            x: left,
+            y,
+            size: 10,
+        });
+    }
 
-    y -= 15;
-    txt = client?.address?.country || '[Country placeholder]';
-    page.drawText(txt, {
-        x: left,
-        y,
-        size: 10,
-    });
+    if (client.address?.country) {
+        y -= 15;
+        txt = client?.address?.country || '[Country placeholder]';
+        page.drawText(txt, {
+            x: left,
+            y,
+            size: 10,
+        });
+    }
 
-    y -= 15;
-    txt = `Reg number: ${client.reg_number || '[Reg number placeholder]'}`;
-    page.drawText(txt, {
-        x: left,
-        y,
-        size: 10,
-    });
+    if (client.reg_number) {
+        y -= 15;
+        txt = `Reg number: ${client.reg_number || '[Reg number placeholder]'}`;
+        page.drawText(txt, {
+            x: left,
+            y,
+            size: 10,
+        });
+    }
 
-    y -= 15;
-    txt = `VAT number: ${client.vat_number || '[VAT number placeholder]'}`;
-    page.drawText(txt, {
-        x: left,
-        y,
-        size: 10,
-    });
+    if (client.vat_number) {
+        y -= 15;
+        txt = `VAT number: ${client.vat_number || '[VAT number placeholder]'}`;
+        page.drawText(txt, {
+            x: left,
+            y,
+            size: 10,
+        });
+    }
 
     // Invoice block
     y = top - 30;
@@ -219,7 +229,7 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
         font: helveticaBold,
         bold: true,
     });
-    
+
     txt = 'Quantity';
     x += defaultFieldWidth;
     page.drawText(txt, {

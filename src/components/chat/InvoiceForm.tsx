@@ -10,7 +10,7 @@ import { useCreateInvoiceMutation } from '@/store/api/invoicesApi'
 import { InvoiceLine, useCreateInvoiceLineMutation } from '@/store/api/invoiceLinesApi'
 import { getInvoiceNumber } from '@/store/slices/accountSlice'
 import { useGeneratePdfMutation } from '@/store/api/edgeApi'
-import { useGetClientQuery } from '@/store/api/clientsApi'
+import { useBumpMutation, useGetClientQuery } from '@/store/api/clientsApi'
 
 interface InvoiceFormProps {
     clientId: number
@@ -28,6 +28,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
     const [createInvoice, { isLoading: creatingInvoice }] = useCreateInvoiceMutation();
     const [createInvoiceLine, { isLoading: creatingInvoiceLine }] = useCreateInvoiceLineMutation();
     const [generatePdf, { isLoading: generatingPdf }] = useGeneratePdfMutation();
+    const [bumpClient, { isLoading: isBumpingClient }] = useBumpMutation();
 
     const handleNewLine = () => {
         dispatch(addLine({ clientId, data: { lineText: '', quantity: 0, unitPrice: 0, vat: 0 } }));
@@ -73,6 +74,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
         generatePdf({ invoice: savedInvoice.data, invoiceLines, client });
         dispatch(resetMessage(clientId));
         handleNewLine();
+        bumpClient(client);
     }
 
     useEffect(() => {
@@ -136,7 +138,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
                         color="primary"
                         variant="extended"
                         onClick={handlePreview}
-                        disabled={creatingInvoice || creatingInvoiceLine || generatingPdf}
+                        disabled={creatingInvoice || creatingInvoiceLine || generatingPdf || isBumpingClient}
                     >
                         <Typography variant="button">Preview</Typography>
                         <KeyboardDoubleArrowUpIcon />

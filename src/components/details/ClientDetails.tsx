@@ -32,13 +32,15 @@ const ClientDetails: React.FC<DetailsContentProps> = ({ clientId }) => {
     const [createClient, { isLoading: isCreating }] = useCreateClientMutation();
 
     useEffect(() => {
-        if (clientId) {
-            console.log(clientId);
-            const response = getClient(String(clientId));
-            if ('data' in response) {
-                setClient(response.data as Client);
+        async function fetchData() {
+            if (clientId) {
+                const response = await getClient(String(clientId));
+                if ('data' in response) {
+                    setClient(response.data as Client);
+                }
             }
         }
+        fetchData();
     }, [clientId, getClient]);
 
     useEffect(() => {
@@ -106,48 +108,48 @@ const ClientDetails: React.FC<DetailsContentProps> = ({ clientId }) => {
                         <Stack spacing={2}>
                             <TextField
                                 label="Name"
-                                value={clientName}
+                                value={clientName || ''}
                                 onChange={(e) => setClientName(e.target.value)}
                                 fullWidth />
 
                             <TextField
                                 label="Reg number"
-                                value={clientRegNumber}
+                                value={clientRegNumber || ''}
                                 onChange={(e) => setClientRegNumber(e.target.value)}
                                 fullWidth />
 
                             <TextField
                                 label="VAT number"
-                                value={clientVatNumber}
+                                value={clientVatNumber || ''}
                                 onChange={(e) => setClientVatNumber(e.target.value)}
                                 fullWidth />
 
                             <TextField
                                 label="Email"
-                                value={clientEmail}
+                                value={clientEmail || ''}
                                 onChange={(e) => setClientEmail(e.target.value)}
                                 fullWidth />
 
                             <TextField
                                 label="Phone"
-                                value={clientPhone}
+                                value={clientPhone || ''}
                                 onChange={(e) => setClientPhone(e.target.value)}
                                 fullWidth />
 
                             <TextField
                                 label="Address Line 1"
-                                value={clientAddressLine1}
+                                value={clientAddressLine1 || ''}
                                 onChange={(e) => setClientAddressLine1(e.target.value)}
                                 fullWidth />
 
                             <TextField
                                 label="Address Line 2"
-                                value={clientAddressLine2}
+                                value={clientAddressLine2 || ''}
                                 onChange={(e) => setClientAddressLine2(e.target.value)}
                                 fullWidth />
 
                             <Autocomplete
-                                value={clientCountry}
+                                value={clientCountry || ''}
                                 onChange={(e, newValue) => setClientCountry(newValue?.toString() || '')}
                                 options={ALL_COUNTRIES}
                                 renderInput={(params) => <TextField {...params} label="Country" />}

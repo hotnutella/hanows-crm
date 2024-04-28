@@ -3,6 +3,7 @@ import { Box, Paper, Stack, Typography } from '@mui/material';
 import React from 'react';
 import styles from './InvoiceMessage.module.css';
 import { useGetInvoiceLinesByInvoiceQuery } from '@/store/api/invoiceLinesApi';
+import { useGeneratePdfMutation } from '@/store/api/edgeApi';
 import { useRouter } from 'next/navigation';
 
 interface InvoiceMessageProps {
@@ -11,10 +12,20 @@ interface InvoiceMessageProps {
 
 const InvoiceMessage: React.FC<InvoiceMessageProps> = ({ invoice }) => {
     const { data: invoiceLines } = useGetInvoiceLinesByInvoiceQuery(invoice.id);
+    const [, { isLoading: isGeneratingPdf}] = useGeneratePdfMutation();
     const router = useRouter();
 
+    const className = isGeneratingPdf ? `${styles.invoice} ${styles.disabled}` : styles.invoice;
+    const handleClick = () => {
+        if (isGeneratingPdf) {
+            return;
+        }
+
+        router.push(`/${invoice.client_id}/${invoice.id}`)
+    }
+
     return (
-        <Paper className={styles.invoice} onClick={() => router.push(`/${invoice.client_id}/${invoice.id}`)}>
+        <Paper className={className} onClick={handleClick}>
             <Stack direction="column" justifyContent="space-between" height="100%">
                 <Typography variant="body2">Invoice {invoice.invoice_number}</Typography>
                 <Box>
