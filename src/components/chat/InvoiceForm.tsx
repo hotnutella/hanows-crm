@@ -1,4 +1,4 @@
-import { Box, Fab, Stack, Typography } from '@mui/material'
+import { Box, Fab, Stack, Tooltip, Typography } from '@mui/material'
 import React, { memo, useEffect } from 'react'
 import InvoiceLineForm from './InvoiceLineForm'
 import AddIcon from '@mui/icons-material/Add'
@@ -70,7 +70,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
                 invoiceLines.push(savedLine.data);
             }
         }));
-        
+
         dispatch(addToGeneratingInvoicesList(invoiceId));
         await generatePdf({ invoice: savedInvoice.data, invoiceLines, client });
         dispatch(removeFromGeneratingInvoicesList(invoiceId));
@@ -127,25 +127,29 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
                                 lineId={+lineId} />
                         ))}
                     </Stack>
-                    <Fab
-                        size="small"
-                        color="primary"
-                        sx={{ marginBottom: 0 }}
-                        onClick={handleNewLine}
-                    >
-                        <AddIcon />
-                    </Fab>
+                    <Tooltip title="Add line" placement="top">
+                        <Fab
+                            size="small"
+                            color="primary"
+                            sx={{ marginBottom: 0 }}
+                            onClick={handleNewLine}
+                        >
+                            <AddIcon />
+                        </Fab>
+                    </Tooltip>
                 </Stack>
                 <Box>
-                    <Fab
-                        color="primary"
-                        variant="extended"
-                        onClick={handlePreview}
-                        disabled={creatingInvoice || creatingInvoiceLine || generatingPdf || isBumpingClient}
-                    >
-                        <Typography variant="button">Preview</Typography>
-                        <KeyboardDoubleArrowUpIcon />
-                    </Fab>
+                    <Tooltip title="Create invoice draft" placement="top">
+                        <Fab
+                            color="primary"
+                            variant="extended"
+                            onClick={handlePreview}
+                            disabled={creatingInvoice || creatingInvoiceLine || generatingPdf || isBumpingClient}
+                        >
+                            <Typography variant="button">Preview</Typography>
+                            <KeyboardDoubleArrowUpIcon />
+                        </Fab>
+                    </Tooltip>
                 </Box>
             </Stack>
         </Box>
