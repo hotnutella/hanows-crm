@@ -1,18 +1,34 @@
-import { useGetClientQuery } from '@/store/api/clientsApi';
+import { Client, useGetClientQuery, useLazyGetClientQuery } from '@/store/api/clientsApi';
 import { Box, Fab, IconButton, Stack, Tooltip, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 interface ChatHeaderProps {
-    clientId: number;
+    clientId?: number;
     showBackButton?: boolean;
 }
 
 const ChatHeader: React.FC<ChatHeaderProps> = ({ clientId, showBackButton }) => {
-    const { data: client, isLoading } = useGetClientQuery(String(clientId));
+    const [client, setClient] = React.useState<Client | undefined>(undefined);
     const router = useRouter();
-    
+    const [getClient] = useLazyGetClientQuery();
+
+    useEffect(() => {
+        async function fetchClient() {
+            if (clientId) {
+                const response = await getClient(String(clientId));
+                if ('data' in response) {
+                    setClient(response.data as Client);
+                }
+            }
+        }
+        fetchClient();
+        // Only run once
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+
     return (
         <Stack
             direction="row"
@@ -24,36 +40,41 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ clientId, showBackButton }) => 
             zIndex={100}
             position="relative"
         >
-            <Stack direction="row" spacing={2}>
-                <Typography variant="h4">
-                    {!isLoading && client?.name}
-                    {isLoading && <>&nbsp;</>}
-                </Typography>
+            {clientId && (
+                <>
+                    <Stack direction="row" spacing={2}>
+                        <Typography variant="h4">
+                            {client && client.name}
+                            {!client && <>&nbsp;</>}
+                        </Typography>
 
-                {showBackButton && (
+                        {showBackButton && (
+                            <Box height={5}>
+                                <Fab
+                                    color="primary"
+                                    size="small"
+                                    variant="extended"
+                                    sx={{ boxShadow: 0, mt: 0.5 }}
+                                    onClick={() => router.push(`/${clientId}`)}
+                                >
+                                    Back to invoices
+                                </Fab>
+                            </Box>
+                        )}
+                    </Stack>
                     <Box height={5}>
-                        <Fab
-                            color="primary"
-                            size="small"
-                            variant="extended"
-                            sx={{ boxShadow: 0, mt: 0.5 }}
-                            onClick={() => router.push(`/${clientId}`)}
-                        >
-                            Back to invoices
-                        </Fab>
+                        <Tooltip title="Client details">
+                            <IconButton
+                                color="primary"
+                                onClick={() => router.push(`/${clientId}/details`)}
+                            >
+                                <MoreHorizIcon />
+                            </IconButton>
+                        </Tooltip>
                     </Box>
-                )}
-            </Stack>
-            <Box height={5}>
-                <Tooltip title="Client details">
-                    <IconButton
-                        color="primary"
-                        onClick={() => router.push(`/${clientId}/details`)}
-                    >
-                        <MoreHorizIcon />
-                    </IconButton>
-                </Tooltip>
-            </Box>
+                </>
+            )}
+            {!clientId && <Typography variant="h4">New client</Typography>}
         </Stack>
     );
 }

@@ -26,6 +26,7 @@ export const clientsApi = createApi({
   endpoints: (builder) => ({
     getClients: builder.query<Client[], void>({
       query: () => 'clients',
+      providesTags: ['CLIENTS'],
     }),
     getClient: builder.query<Client, string>({
       query: (id) => `clients?id=eq.${id}`,
@@ -35,12 +36,16 @@ export const clientsApi = createApi({
       },
       providesTags: ['CLIENTS'],
     }),
-    createClient: builder.mutation({
+    createClient: builder.mutation<Client, Client>({
       query: (newClient) => ({
         url: 'clients',
         method: 'POST',
         body: newClient,
       }),
+      transformResponse: (response: Client[]) => {
+        if (!response) return {} as Client;
+        return response[0];
+      },
       invalidatesTags: ['CLIENTS'],
     }),
     updateClient: builder.mutation({
@@ -64,6 +69,7 @@ export const clientsApi = createApi({
 export const { 
   useGetClientsQuery,
   useGetClientQuery,
+  useLazyGetClientQuery,
   useCreateClientMutation,
   useUpdateClientMutation,
   useDeleteClientMutation,
