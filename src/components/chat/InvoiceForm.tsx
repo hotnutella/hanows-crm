@@ -1,7 +1,7 @@
-import { Box, Fab, Stack, Tooltip, Typography } from '@mui/material'
+import { Box, Fab, IconButton, Stack, Tooltip, Typography } from '@mui/material'
 import React, { memo, useEffect } from 'react'
 import InvoiceLineForm from './InvoiceLineForm'
-import AddIcon from '@mui/icons-material/Add'
+import AddCircle from '@mui/icons-material/AddCircle'
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@/store'
@@ -128,14 +128,13 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
                         ))}
                     </Stack>
                     <Tooltip title="Add line" placement="top">
-                        <Fab
-                            size="small"
+                        <IconButton
                             color="primary"
-                            sx={{ marginBottom: 0 }}
+                            sx={{ width: '40px', height: '40px' }}
                             onClick={handleNewLine}
                         >
-                            <AddIcon />
-                        </Fab>
+                            <AddCircle />
+                        </IconButton>
                     </Tooltip>
                 </Stack>
                 <Box>
