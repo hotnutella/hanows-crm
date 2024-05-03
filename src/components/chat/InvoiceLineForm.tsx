@@ -1,4 +1,4 @@
-import { Stack, TextField } from '@mui/material';
+import { Box, Grid, Stack, TextField, useMediaQuery, useTheme } from '@mui/material';
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getLineData, updateLineText, updateQuantity, updateUnitPrice, updateVat } from '@/store/slices/messageSlice';
@@ -12,6 +12,8 @@ interface InvoiceLineFormProps {
 const InvoiceLineForm: React.FC<InvoiceLineFormProps> = ({ clientId, lineId }) => {
     const dispatch = useDispatch<AppDispatch>();
     const lineData = useSelector((state: RootState) => getLineData(state, clientId, lineId));
+    const theme = useTheme();
+    const isXs = useMediaQuery(theme.breakpoints.down('md'));
 
     const handleChangeLineText = (e: React.ChangeEvent<HTMLInputElement>) => {
         dispatch(updateLineText({ clientId, lineId, lineText: e.target.value }));
@@ -32,55 +34,66 @@ const InvoiceLineForm: React.FC<InvoiceLineFormProps> = ({ clientId, lineId }) =
         dispatch(updateVat({ clientId, lineId, vat: newValue }));
     }
 
+    const lineItemStyle = isXs ? { width: '100%' } : { width: '16rem' };
+    const smallFieldStyle = isXs ? {} : { width: '5rem' };
+
     return (
-        <Stack direction="row" spacing={2}>
-            <TextField
-                size="small"
-                value={lineData?.lineText || ''}
-                placeholder="Line item"
-                onChange={handleChangeLineText}
-                sx={{ width: '20rem' }}
-                InputProps={{
-                    style: { borderRadius: '20px' }
-                }}
-            />
+        <Grid container columnSpacing={isXs ? 0 : 4} rowSpacing={1}>
+            <Grid item xs={12} lg={6}>
+                <TextField
+                    size="small"
+                    value={lineData?.lineText || ''}
+                    placeholder="Line item"
+                    onChange={handleChangeLineText}
+                    sx={lineItemStyle}
+                    InputProps={{
+                        style: { borderRadius: '20px' }
+                    }}
+                />
+            </Grid>
+            <Grid item xs={12} lg={6}>
+                <Stack direction="row" spacing={1}>
+                    <TextField
+                        size="small"
+                        value={lineData?.quantity == 0 ? '' : lineData?.quantity}
+                        type="number"
+                        placeholder="Qty"
+                        onChange={handleQuantityChange}
+                        sx={smallFieldStyle}
+                        fullWidth
+                        InputProps={{
+                            style: { borderRadius: '20px' }
+                        }}
+                    />
 
-            <TextField
-                size="small"
-                value={lineData?.quantity == 0 ? '' : lineData?.quantity}
-                type="number"
-                placeholder="Qty"
-                onChange={handleQuantityChange}
-                sx={{ width: '5rem' }}
-                InputProps={{
-                    style: { borderRadius: '20px' }
-                }}
-            />
+                    <TextField
+                        size="small"
+                        value={lineData?.unitPrice == 0 ? '' : lineData?.unitPrice}
+                        type="number"
+                        placeholder="Price"
+                        onChange={handleUnitPriceChange}
+                        sx={smallFieldStyle}
+                        fullWidth
+                        InputProps={{
+                            style: { borderRadius: '20px' }
+                        }}
+                    />
 
-            <TextField
-                size="small"
-                value={lineData?.unitPrice == 0 ? '' : lineData?.unitPrice}
-                type="number"
-                placeholder="Price"
-                onChange={handleUnitPriceChange}
-                sx={{ width: '5rem' }}
-                InputProps={{
-                    style: { borderRadius: '20px' }
-                }}
-            />
-
-            <TextField
-                size="small"
-                value={lineData?.vat == 0 ? '' : lineData?.vat}
-                type="number"
-                placeholder="VAT"
-                onChange={handleVatChange}
-                sx={{ width: '5rem' }}
-                InputProps={{
-                    style: { borderRadius: '20px' }
-                }}
-            />
-        </Stack>
+                    <TextField
+                        size="small"
+                        value={lineData?.vat == 0 ? '' : lineData?.vat}
+                        type="number"
+                        placeholder="VAT"
+                        onChange={handleVatChange}
+                        sx={smallFieldStyle}
+                        fullWidth
+                        InputProps={{
+                            style: { borderRadius: '20px' }
+                        }}
+                    />
+                </Stack>
+            </Grid>
+        </Grid>
     );
 };
 

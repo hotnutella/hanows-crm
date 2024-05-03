@@ -1,4 +1,4 @@
-import { Box, Fab, IconButton, Stack, Tooltip, Typography } from '@mui/material'
+import { Box, Fab, IconButton, Stack, Tooltip, Typography, useMediaQuery, useTheme } from '@mui/material'
 import React, { memo, useEffect } from 'react'
 import InvoiceLineForm from './InvoiceLineForm'
 import AddCircle from '@mui/icons-material/AddCircle'
@@ -22,6 +22,8 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
     const lines = useSelector((state: RootState) => getLines(state, clientId));
     const invoiceNumber = useSelector(getInvoiceNumber);
     const dispatch = useDispatch<AppDispatch>();
+    const theme = useTheme();
+    const isXs = useMediaQuery(theme.breakpoints.down('md'));
 
     const { data: client } = useGetClientQuery(String(clientId));
 
@@ -107,6 +109,23 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    const previewButton = (
+        <Box>
+            <Tooltip title="Create invoice draft" placement="top">
+                <Fab
+                    color="primary"
+                    variant="extended"
+                    size={isXs ? 'small' : 'large'}
+                    onClick={handlePreview}
+                    disabled={creatingInvoice || creatingInvoiceLine || generatingPdf || isBumpingClient}
+                >
+                    <Typography variant="button">Preview</Typography>
+                    <KeyboardDoubleArrowUpIcon />
+                </Fab>
+            </Tooltip>
+        </Box>
+    );
+
     return (
         <Box
             position="sticky"
@@ -117,8 +136,23 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
             p={2}
             ref={ref}
         >
-            <Stack direction="row" justifyContent="space-between" spacing={2}>
-                <Stack direction="row" spacing={2}>
+            {isXs && (
+                <Stack mt="-40px" direction="row" justifyContent="center">
+                    {previewButton}
+                </Stack>
+            )}
+            <Stack direction="row" justifyContent="space-between">
+                <Stack direction="row">
+                    <Tooltip title="Add line" placement="top">
+                        <IconButton
+                            color="primary"
+                            size="small"
+                            disableRipple
+                            onClick={handleNewLine}
+                        >
+                            <AddCircle />
+                        </IconButton>
+                    </Tooltip>
                     <Stack direction="column" spacing={2}>
                         {Object.keys(lines).map(lineId => (
                             <InvoiceLineForm
@@ -127,29 +161,8 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
                                 lineId={+lineId} />
                         ))}
                     </Stack>
-                    <Tooltip title="Add line" placement="top">
-                        <IconButton
-                            color="primary"
-                            sx={{ width: '40px', height: '40px' }}
-                            onClick={handleNewLine}
-                        >
-                            <AddCircle />
-                        </IconButton>
-                    </Tooltip>
                 </Stack>
-                <Box>
-                    <Tooltip title="Create invoice draft" placement="top">
-                        <Fab
-                            color="primary"
-                            variant="extended"
-                            onClick={handlePreview}
-                            disabled={creatingInvoice || creatingInvoiceLine || generatingPdf || isBumpingClient}
-                        >
-                            <Typography variant="button">Preview</Typography>
-                            <KeyboardDoubleArrowUpIcon />
-                        </Fab>
-                    </Tooltip>
-                </Box>
+                {!isXs && previewButton}
             </Stack>
         </Box>
     )
