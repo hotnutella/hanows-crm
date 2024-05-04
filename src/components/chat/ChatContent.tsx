@@ -27,7 +27,7 @@ const ChatContent: React.FC<ChatContentProps> = (props) => {
 
     return (
         <Box
-            height={`calc(100vh - 58px - ${props.formHeight || 0}px)`}
+            height={`calc(100vh - ${props.formHeight || 0}px)`}
             width="100%"
             overflow="auto"
         >
