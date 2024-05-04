@@ -1,8 +1,9 @@
-import { Client, useGetClientQuery, useLazyGetClientQuery } from '@/store/api/clientsApi';
+import { Client, useLazyGetClientQuery } from '@/store/api/clientsApi';
 import { Box, Fab, IconButton, Stack, Tooltip, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import React, { useEffect } from 'react';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
 interface ChatHeaderProps {
     clientId?: number;
@@ -47,6 +48,14 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ clientId, showBackButton }) => 
             {clientId && (
                 <>
                     <Stack direction="row" spacing={2}>
+                        {isXs && <Tooltip title="Back to client list">
+                            <IconButton
+                                color="primary"
+                                onClick={() => router.push('/')}
+                            >
+                                <ArrowBackIosNewIcon />
+                            </IconButton>
+                        </Tooltip>}
                         <Typography variant="h4">
                             {client && client.name}
                             {!client && <>&nbsp;</>}

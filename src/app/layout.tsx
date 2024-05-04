@@ -7,14 +7,20 @@ import '@/styles/global.css';
 
 export default function RootLayout({
   clients,
-  chat
+  chat,
+  params,
 }: Readonly<{
   children: React.ReactNode;
   clients: React.ReactNode;
   chat: React.ReactNode;
+  params: {
+    id: string;
+  };
 }>) {
   const theme = useTheme();
-  const isMd = useMediaQuery(theme.breakpoints.up('md'));
+  const isXs = useMediaQuery(theme.breakpoints.down('md'));
+
+  console.log(params.id);
 
   return (
     <html lang="en">
@@ -22,7 +28,7 @@ export default function RootLayout({
       <body>
         <Provider store={store}>
           <Grid container>
-            {isMd && (
+            {!isXs && (
               <>
                 <Grid item width={400} minWidth={400}>
                   <Box height="100vh" overflow="auto">
@@ -36,9 +42,10 @@ export default function RootLayout({
                 </Grid>
               </>
             )}
-            {!isMd && (
+            {isXs && (
               <Grid item xs={12}>
                 <Box height="100vh" overflow="auto">
+                  {clients}
                   {chat}
                 </Box>
               </Grid>
