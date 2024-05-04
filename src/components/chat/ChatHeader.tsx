@@ -1,5 +1,5 @@
 import { Client, useGetClientQuery, useLazyGetClientQuery } from '@/store/api/clientsApi';
-import { Box, Fab, IconButton, Stack, Tooltip, Typography } from '@mui/material';
+import { Box, Fab, IconButton, Stack, Tooltip, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import React, { useEffect } from 'react';
@@ -13,6 +13,8 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ clientId, showBackButton }) => 
     const [client, setClient] = React.useState<Client | undefined>(undefined);
     const router = useRouter();
     const [getClient] = useLazyGetClientQuery();
+    const theme = useTheme();
+    const isXs = useMediaQuery(theme.breakpoints.down('md'));
 
     useEffect(() => {
         async function fetchClient() {
@@ -28,6 +30,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ clientId, showBackButton }) => 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    const width = isXs ? '100%' : 'calc(100% - 400px)';
 
     return (
         <Stack
@@ -35,10 +38,11 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ clientId, showBackButton }) => 
             justifyContent="space-between"
             sx={{ backgroundColor: 'white' }}
             boxShadow={2}
-            pl={2}
+            px={2}
             py={1}
             zIndex={100}
-            position="relative"
+            width={width}
+            position="fixed"
         >
             {clientId && (
                 <>
@@ -57,12 +61,14 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ clientId, showBackButton }) => 
                                     sx={{ boxShadow: 0, mt: 0.5 }}
                                     onClick={() => router.push(`/${clientId}`)}
                                 >
-                                    Back to invoices
+                                    <Typography fontSize={ isXs ? '0.7rem' : '0.875rem' }>
+                                        Back to invoices
+                                    </Typography>
                                 </Fab>
                             </Box>
                         )}
                     </Stack>
-                    <Box height={5}>
+                    <Box height={5} pr={2}>
                         <Tooltip title="Client details">
                             <IconButton
                                 color="primary"

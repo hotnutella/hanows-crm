@@ -31,7 +31,7 @@ const ChatContent: React.FC<ChatContentProps> = (props) => {
             width="100%"
             overflow="auto"
         >
-            <Stack spacing={2} minHeight="100%" justifyContent="end">
+            <Stack spacing={2} minHeight="100vh" justifyContent="end">
                 {invoices?.map((invoice) => (
                     <Stack key={invoice.id} direction="row" justifyContent="space-between">
                         <Box></Box>

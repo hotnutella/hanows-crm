@@ -133,6 +133,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
             left={0}
             right={0}
             boxShadow={2}
+            zIndex={99}
             p={2}
             ref={ref}
         >
