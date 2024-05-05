@@ -32,6 +32,8 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ clientId, showBackButton }) => 
     }, []);
 
     const width = isXs ? '100%' : 'calc(100% - 400px)';
+    const titleFontSize = isXs ? '1rem' : '2rem';
+    const titleLineHeight = isXs ? 2.5 : 1.5;
 
     return (
         <Stack
@@ -56,7 +58,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ clientId, showBackButton }) => 
                                 <ArrowBackIosNewIcon />
                             </IconButton>
                         </Tooltip>}
-                        <Typography variant="h4">
+                        <Typography variant="h4" fontSize={titleFontSize} lineHeight={titleLineHeight}>
                             {client && client.name}
                             {!client && <>&nbsp;</>}
                         </Typography>

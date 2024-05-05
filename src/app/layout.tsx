@@ -20,10 +20,9 @@ export default function RootLayout({
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.down('md'));
 
-  console.log(params.id);
-
   return (
     <html lang="en">
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
       <title>Hanows CRM</title>
       <body>
         <Provider store={store}>

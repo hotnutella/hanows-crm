@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useGetInvoiceQuery } from '@/store/api/invoicesApi';
 import ChatHeader from '@/components/chat/ChatHeader';
 
@@ -19,7 +19,13 @@ const InvoicePage: React.FC<InvoicePageProps> = ({ params }) => {
         <>
             <ChatHeader clientId={+id} showBackButton={true} />
             {invoice && (
-                <iframe src={invoice.additional_info.pdf_url} style={{ width: '100%', height: 'calc(100vh - 58px)' }} />
+                <iframe 
+                    src={invoice.additional_info.pdf_url} 
+                    style={{ 
+                        marginTop: '58px',
+                        width: '100%', 
+                        height: 'calc(100vh - 58px)'
+                    }} />
             )}
         </>
     );
