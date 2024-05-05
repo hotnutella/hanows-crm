@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useGetInvoiceQuery } from '@/store/api/invoicesApi';
 import ChatHeader from '@/components/chat/ChatHeader';
 
