@@ -70,7 +70,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ clientId, showBackButton }) => 
                                     size="small"
                                     variant="extended"
                                     sx={{ boxShadow: 0, mt: 0.5 }}
-                                    onClick={() => router.push(`/${clientId}`)}
+                                    onClick={() => router.push(`/crm/${clientId}`)}
                                 >
                                     <Typography fontSize={ isXs ? '0.7rem' : '0.875rem' }>
                                         Back to invoices
@@ -83,7 +83,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ clientId, showBackButton }) => 
                         <Tooltip title="Client details">
                             <IconButton
                                 color="primary"
-                                onClick={() => router.push(`/${clientId}/details`)}
+                                onClick={() => router.push(`/crm/${clientId}/details`)}
                             >
                                 <MoreHorizIcon />
                             </IconButton>

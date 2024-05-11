@@ -23,7 +23,7 @@ const InvoiceMessage: React.FC<InvoiceMessageProps> = ({ invoice }) => {
             return;
         }
 
-        router.push(`/${invoice.client_id}/${invoice.id}`)
+        router.push(`/crm/${invoice.client_id}/${invoice.id}`)
     }
 
     return (

@@ -21,7 +21,7 @@ const ClientsHeader: React.FC = () => {
             <Stack direction="row" justifyContent="space-between">
                 <Typography variant="h4">Clients</Typography>
                 <Tooltip title="Add client">
-                    <IconButton size="small" color="primary" onClick={() => router.push('/new')}>
+                    <IconButton size="small" color="primary" onClick={() => router.push('/crm/new')}>
                         <AddCircleIcon color="primary" fontSize="large" />
                     </IconButton>
                 </Tooltip>

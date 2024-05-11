@@ -16,7 +16,7 @@ const ClientOption: React.FC<ClientOptionProps> = ({ client }) => {
     const className = isSelected ? `${styles.client} ${styles.selected}` : styles.client
 
     return (
-        <Link href={`/${client.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+        <Link href={`/crm/${client.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
             <Box className={className}>
                 <Typography variant="body1">{client.name}</Typography>
                 <Typography variant="body2" color="grey">{client.email}</Typography>
