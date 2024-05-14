@@ -41,13 +41,18 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
             return;
         }
 
+        const filteredLines = Object.values(lines).filter(line => line.lineText.trim() !== '');
+        if (filteredLines.length === 0) {
+            return;
+        }
+
         const savedInvoice = await createInvoice({
             client_id: clientId,
             invoice_number: invoiceNumber,
             issue_date: new Date().toISOString(),
             due_date: new Date(new Date().setDate(new Date().getDate() + 20)).toISOString(),
             status: 'draft',
-            total_amount: Object.values(lines).reduce((acc, line) => {
+            total_amount: Object.values(filteredLines).reduce((acc, line) => {
                 return acc + (line.quantity * line.unitPrice + line.quantity * line.unitPrice * line.vat / 100);
             }, 0)
         });
@@ -59,7 +64,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
         const invoiceId = savedInvoice.data.id;
         const invoiceLines: InvoiceLine[] = [];
 
-        await Promise.all(Object.values(lines).map(async (line) => {
+        await Promise.all(Object.values(filteredLines).map(async (line) => {
             const savedLine = await createInvoiceLine({
                 invoice_id: invoiceId,
                 description: line.lineText,
