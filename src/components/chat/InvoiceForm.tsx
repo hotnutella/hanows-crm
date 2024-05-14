@@ -1,8 +1,7 @@
-import { Box, Fab, IconButton, Stack, Tooltip, Typography, useMediaQuery, useTheme } from '@mui/material'
+import { Box, Fab, Stack, Tooltip, Typography, useMediaQuery, useTheme } from '@mui/material'
 import React, { memo, useEffect } from 'react'
 import InvoiceLineForm from './InvoiceLineForm'
-import AddCircle from '@mui/icons-material/AddCircle'
-import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp'
+import PostAddIcon from '@mui/icons-material/PostAdd'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@/store'
 import { addLine, resetMessage, getLines, addToGeneratingInvoicesList, removeFromGeneratingInvoicesList } from '@/store/slices/messageSlice'
@@ -11,6 +10,7 @@ import { InvoiceLine, useCreateInvoiceLineMutation } from '@/store/api/invoiceLi
 import { getInvoiceNumber } from '@/store/slices/accountSlice'
 import { useGeneratePdfMutation } from '@/store/api/edgeApi'
 import { useBumpMutation, useGetClientQuery } from '@/store/api/clientsApi'
+import { Add } from '@mui/icons-material'
 
 interface InvoiceFormProps {
     clientId: number
@@ -119,11 +119,25 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
                     onClick={handlePreview}
                     disabled={creatingInvoice || creatingInvoiceLine || generatingPdf || isBumpingClient}
                 >
-                    <Typography variant="button">Preview</Typography>
-                    <KeyboardDoubleArrowUpIcon />
+                    <PostAddIcon sx={{ mr: 1 }} />
+                    <Typography variant="button">Create Draft</Typography>
                 </Fab>
             </Tooltip>
         </Box>
+    );
+
+    const newLineButton = (
+        <Tooltip title="Add line" placement="top">
+            <Fab
+                color="primary"
+                variant="extended"
+                size={isXs ? 'small' : 'large'}
+                onClick={handleNewLine}
+            >
+                <Add sx={{ mr: 1 }} />
+                <Typography variant="button">Add Line</Typography>
+            </Fab>
+        </Tooltip>
     );
 
     return (
@@ -138,32 +152,26 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
             ref={ref}
         >
             {isXs && (
-                <Stack mt="-40px" direction="row" justifyContent="center">
+                <Stack mt="-40px" direction="row" justifyContent="center" gap={1}>
+                    {newLineButton}
                     {previewButton}
                 </Stack>
             )}
             <Stack direction="row" justifyContent="space-between">
-                <Stack direction="row">
-                    <Tooltip title="Add line" placement="top">
-                        <IconButton
-                            color="primary"
-                            size="small"
-                            disableRipple
-                            onClick={handleNewLine}
-                        >
-                            <AddCircle />
-                        </IconButton>
-                    </Tooltip>
-                    <Stack direction="column" spacing={2}>
-                        {Object.keys(lines).map(lineId => (
-                            <InvoiceLineForm
-                                key={lineId}
-                                clientId={clientId}
-                                lineId={+lineId} />
-                        ))}
-                    </Stack>
+                <Stack direction="column" spacing={2}>
+                    {Object.keys(lines).map(lineId => (
+                        <InvoiceLineForm
+                            key={lineId}
+                            clientId={clientId}
+                            lineId={+lineId} />
+                    ))}
                 </Stack>
-                {!isXs && previewButton}
+                {!isXs && (
+                    <Stack direction="row" gap={2}>
+                        {newLineButton}
+                        {previewButton}
+                    </Stack>
+                )}
             </Stack>
         </Box>
     )
