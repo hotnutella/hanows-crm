@@ -158,7 +158,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
                 </Stack>
             )}
             <Stack direction="row" justifyContent="space-between">
-                <Stack direction="column" spacing={2}>
+                <Stack direction="column" spacing={isXs ? 2 : 1}>
                     {Object.keys(lines).map(lineId => (
                         <InvoiceLineForm
                             key={lineId}
