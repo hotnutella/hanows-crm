@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { getIsGeneratingPdf } from '@/store/slices/messageSlice';
 import { RootState } from '@/store';
+import Ribbon from './Ribbon';
 
 interface InvoiceMessageProps {
     invoice: Invoice;
@@ -44,6 +45,7 @@ const InvoiceMessage: React.FC<InvoiceMessageProps> = ({ invoice }) => {
                 </Box>
                 <Typography variant="body1" textAlign="right">Total: {invoice.total_amount}</Typography>
             </Stack>
+            {invoice.status === 'draft' && <Ribbon text={invoice.status} />}
         </Paper>
     );
 };

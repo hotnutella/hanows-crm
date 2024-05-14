@@ -4,6 +4,8 @@
     width: 10rem;
     height: 16rem;
     user-select: none;
+    position: relative;
+    overflow: hidden;
 }
 
 .invoice:not(.disabled):hover {
