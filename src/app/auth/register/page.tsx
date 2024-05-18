@@ -171,7 +171,7 @@ const RegisterPage: React.FC = () => {
                 <Stack direction="row" alignItems="center" spacing={2}>
                     <Typography variant="h4">Create an account</Typography>
                 </Stack>
-                <Stepper activeStep={activeStep} sx={{ mb: 2, width: 400 }} orientation="vertical">
+                <Stepper activeStep={activeStep} sx={{ mb: 2, width: 350 }} orientation="vertical">
                     {steps.map((step, index) => (
                         <Step key={step.label} sx={{ width: '100%' }}>
                             <StepLabel>{step.label}</StepLabel>
