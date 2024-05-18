@@ -3,6 +3,11 @@
 import React, { FormEvent, useState } from 'react';
 import { TextField, Button, Box, Typography, Stack, FormGroup, Grid, Stepper, Step, StepLabel } from '@mui/material';
 
+interface StepData {
+    label: string;
+    fields: React.ReactNode[];
+}
+
 const RegisterPage: React.FC = () => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -23,12 +28,142 @@ const RegisterPage: React.FC = () => {
         event.preventDefault();
     };
 
-    const steps = [
-        'Personal information',
-        'Company information',
-        'Contact information',
-        'Account information',
+    const steps: StepData[] = [
+        {
+            label: 'Personal information',
+            fields: [
+                <TextField
+                    key="firstName"
+                    label="First name"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    fullWidth
+                />,
+                <TextField
+                    key="lastName"
+                    label="Last name"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    fullWidth
+                />,
+            ],
+        },
+        {
+            label: 'Company information',
+            fields: [
+                <TextField
+                    key="companyName"
+                    label="Company name"
+                    value={companyName}
+                    onChange={(e) => setCompanyName(e.target.value)}
+                    fullWidth
+                />,
+                <TextField
+                    key="companyRegNumber"
+                    label="Company registration number"
+                    value={companyRegNumber}
+                    onChange={(e) => setCompanyRegNumber(e.target.value)}
+                    fullWidth
+                />,
+                <TextField
+                    key="vatNumber"
+                    label="VAT number"
+                    value={vatNumber}
+                    onChange={(e) => setVatNumber(e.target.value)}
+                    fullWidth
+                />,
+            ],
+        },
+        {
+            label: 'Contact information',
+            fields: [
+                <TextField
+                    key="address"
+                    label="Address"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    fullWidth
+                />,
+                <TextField
+                    key="city"
+                    label="City"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    fullWidth
+                />,
+                <TextField
+                    key="zipCode"
+                    label="Zip code"
+                    value={zipCode}
+                    onChange={(e) => setZipCode(e.target.value)}
+                    fullWidth
+                />,
+                <TextField
+                    key="country"
+                    label="Country"
+                    value={country}
+                    onChange={(e) => setCountry(e.target.value)}
+                    fullWidth
+                />,
+                <TextField
+                    key="phone"
+                    label="Phone"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    fullWidth
+                />,
+                <TextField
+                    key="email"
+                    label="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    fullWidth
+                />,
+            ],
+        },
+        {
+            label: 'Account information',
+            fields: [
+                <TextField
+                    key="password"
+                    label="Password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    fullWidth
+                />,
+                <TextField
+                    key="confirmPassword"
+                    label="Confirm password"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    fullWidth
+                />,
+            ],
+        }
     ];
+
+    const buttons = (
+        <Stack direction="row" justifyContent="space-between">
+            <Button
+                disabled={activeStep === 0}
+                onClick={() => setActiveStep(activeStep - 1)}
+            >
+                Back
+            </Button>
+            {activeStep < steps.length - 1 && (
+                <Button onClick={() => setActiveStep(activeStep + 1)}>
+                    Next
+                </Button>
+            )}
+            {activeStep === steps.length - 1 && (
+                <Button type="submit" variant="contained" color="primary">
+                    Register
+                </Button>
+            )}
+        </Stack>
+    );
 
     return (
         <form onSubmit={handleRegister}>
@@ -36,138 +171,19 @@ const RegisterPage: React.FC = () => {
                 <Stack direction="row" alignItems="center" spacing={2}>
                     <Typography variant="h4">Create an account</Typography>
                 </Stack>
-                <Stack direction="row" spacing={10} alignContent="center">
-                    <Box width="100%">
-                        <Stepper activeStep={activeStep} sx={{ mb: 2 }}>
-                            {steps.map(label => (
-                                <Step key={label}>
-                                    <StepLabel>{label}</StepLabel>
-                                </Step>
-                            ))}
-                        </Stepper>
-                        <Stack spacing={2}>
-                            {activeStep === 0 && (
-                                <>
-                                    <TextField
-                                        label="First name"
-                                        value={firstName}
-                                        onChange={(e) => setFirstName(e.target.value)}
-                                        fullWidth
-                                    />
-                                    <TextField
-                                        label="Last name"
-                                        value={lastName}
-                                        onChange={(e) => setLastName(e.target.value)}
-                                        fullWidth
-                                    />
-                                </>
+                <Stepper activeStep={activeStep} sx={{ mb: 2, width: 400 }} orientation="vertical">
+                    {steps.map((step, index) => (
+                        <Step key={step.label} sx={{ width: '100%' }}>
+                            <StepLabel>{step.label}</StepLabel>
+                            {activeStep === index && (
+                                <Stack spacing={2} width="100%">
+                                    {step.fields}
+                                    {buttons}
+                                </Stack>
                             )}
-                            {activeStep === 1 && (
-                                <>
-                                    <TextField
-                                        label="Company name"
-                                        value={companyName}
-                                        onChange={(e) => setCompanyName(e.target.value)}
-                                        fullWidth
-                                    />
-                                    <TextField
-                                        label="Company registration number"
-                                        value={companyRegNumber}
-                                        onChange={(e) => setCompanyRegNumber(e.target.value)}
-                                        fullWidth
-                                    />
-                                    <TextField
-                                        label="VAT number"
-                                        value={vatNumber}
-                                        onChange={(e) => setVatNumber(e.target.value)}
-                                        fullWidth
-                                    />
-                                </>
-                            )}
-                            {activeStep === 2 && (
-                                <>
-                                    <TextField
-                                        label="Address"
-                                        value={address}
-                                        onChange={(e) => setAddress(e.target.value)}
-                                        fullWidth
-                                    />
-                                    <TextField
-                                        label="City"
-                                        value={city}
-                                        onChange={(e) => setCity(e.target.value)}
-                                        fullWidth
-                                    />
-                                    <TextField
-                                        label="Zip code"
-                                        value={zipCode}
-                                        onChange={(e) => setZipCode(e.target.value)}
-                                        fullWidth
-                                    />
-                                    <TextField
-                                        label="Country"
-                                        value={country}
-                                        onChange={(e) => setCountry(e.target.value)}
-                                        fullWidth
-                                    />
-                                    <TextField
-                                        label="Phone"
-                                        value={phone}
-                                        onChange={(e) => setPhone(e.target.value)}
-                                        fullWidth
-                                    />
-                                    <TextField
-                                        label="Email"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        fullWidth
-                                    />
-                                </>
-                            )}
-                            {activeStep === 3 && (
-                                <>
-                                    <TextField
-                                        label="Password"
-                                        type="password"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        fullWidth
-                                    />
-                                    <TextField
-                                        label="Confirm password"
-                                        type="password"
-                                        value={confirmPassword}
-                                        onChange={(e) => setConfirmPassword(e.target.value)}
-                                        fullWidth
-                                    />
-                                </>
-                            )}
-                        </Stack>
-
-                    </Box>
-                </Stack>
-
-                <Stack direction="row" justifyContent="space-evenly" width="100%">
-                    <Button
-                        disabled={activeStep === 0}
-                        onClick={() => setActiveStep(prevActiveStep => prevActiveStep - 1)}
-                    >
-                        Back
-                    </Button>
-                    {activeStep < steps.length - 1 && <Button
-                        onClick={() => setActiveStep(prevActiveStep => prevActiveStep + 1)}
-                    >
-                        Next
-                    </Button>}
-                    {activeStep === steps.length - 1 && <Button
-                        size="large"
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                    >
-                        Sign up
-                    </Button>}
-                </Stack>
+                        </Step>
+                    ))}
+                </Stepper>
             </Stack>
         </form >
     );
