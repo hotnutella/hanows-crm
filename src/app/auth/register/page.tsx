@@ -33,19 +33,19 @@ const RegisterPage: React.FC = () => {
     return (
         <form onSubmit={handleRegister}>
             <Stack justifyContent="space-evenly" alignItems="center" height="100vh" width="100vw">
-                    <Stack direction="row" alignItems="center" spacing={2}>
-                        <Typography variant="h4">Create an account</Typography>
-                    </Stack>
-                    <Stack direction="row" spacing={10} alignContent="center">
-                        <Box width="100%">
-                            <Stepper activeStep={activeStep} sx={{ mb: 2 }}>
-                                {steps.map(label => (
-                                    <Step key={label}>
-                                        <StepLabel>{label}</StepLabel>
-                                    </Step>
-                                ))}
-                            </Stepper>
-
+                <Stack direction="row" alignItems="center" spacing={2}>
+                    <Typography variant="h4">Create an account</Typography>
+                </Stack>
+                <Stack direction="row" spacing={10} alignContent="center">
+                    <Box width="100%">
+                        <Stepper activeStep={activeStep} sx={{ mb: 2 }}>
+                            {steps.map(label => (
+                                <Step key={label}>
+                                    <StepLabel>{label}</StepLabel>
+                                </Step>
+                            ))}
+                        </Stepper>
+                        <Stack spacing={2}>
                             {activeStep === 0 && (
                                 <>
                                     <TextField
@@ -142,31 +142,32 @@ const RegisterPage: React.FC = () => {
                                     />
                                 </>
                             )}
+                        </Stack>
 
-                        </Box>
-                    </Stack>
+                    </Box>
+                </Stack>
 
-                    <Stack direction="row" justifyContent="space-evenly" width="100%">
-                        <Button
-                            disabled={activeStep === 0}
-                            onClick={() => setActiveStep(prevActiveStep => prevActiveStep - 1)}
-                        >
-                            Back
-                        </Button>
-                        {activeStep < steps.length - 1 && <Button
-                            onClick={() => setActiveStep(prevActiveStep => prevActiveStep + 1)}
-                        >
-                            Next
-                        </Button>}
-                        {activeStep === steps.length - 1 && <Button
-                            size="large"
-                            type="submit"
-                            variant="contained"
-                            color="primary"
-                        >
-                            Sign up
-                        </Button>}
-                    </Stack>
+                <Stack direction="row" justifyContent="space-evenly" width="100%">
+                    <Button
+                        disabled={activeStep === 0}
+                        onClick={() => setActiveStep(prevActiveStep => prevActiveStep - 1)}
+                    >
+                        Back
+                    </Button>
+                    {activeStep < steps.length - 1 && <Button
+                        onClick={() => setActiveStep(prevActiveStep => prevActiveStep + 1)}
+                    >
+                        Next
+                    </Button>}
+                    {activeStep === steps.length - 1 && <Button
+                        size="large"
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                    >
+                        Sign up
+                    </Button>}
+                </Stack>
             </Stack>
         </form >
     );
