@@ -62,7 +62,7 @@ const ClientDetails: React.FC<DetailsContentProps> = ({ clientId }) => {
         } else {
             const newClient = await createClient(submitData);
             if ('data' in newClient) {
-                router.push(`/${newClient.data.id}`);
+                router.push(`/crm/${newClient.data.id}`);
             }
         }
     }
