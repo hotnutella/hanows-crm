@@ -1,26 +1,29 @@
-import { createApi } from '@reduxjs/toolkit/query/react';
-import { baseQuery } from './baseQuery';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { prepareHeaders } from './baseQuery';
 
 interface Credentials {
+    id: string;
     email: string;
     password: string;
 }
 
-// Define your API endpoints
-const authApi = createApi({
+export const authApi = createApi({
     reducerPath: 'authApi',
-    baseQuery,
+    baseQuery: fetchBaseQuery({
+        baseUrl: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1`,
+        prepareHeaders,
+    }),
     endpoints: (builder) => ({
-        // Define your endpoints here
-        createAccount: builder.mutation<void, Credentials>({
+        createAccount: builder.mutation<Credentials, Partial<Credentials>>({
             query: (credentials) => ({
-                url: 'auth/signup',
+                url: 'signup',
                 method: 'POST',
                 body: credentials,
-            }),
-        }),
+            })
+        })
     }),
 });
 
-// Export hooks for each endpoint
-export const { } = authApi;
+export const {
+    useCreateAccountMutation,
+} = authApi;

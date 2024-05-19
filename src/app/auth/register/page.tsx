@@ -1,7 +1,10 @@
 'use client';
 
 import React, { FormEvent, useState } from 'react';
-import { TextField, Button, Box, Typography, Stack, FormGroup, Grid, Stepper, Step, StepLabel } from '@mui/material';
+import { TextField, Button, Typography, Stack, Stepper, Step, StepLabel } from '@mui/material';
+import { useCreateAccountMutation } from '@/store/api/authApi';
+import { useCreateAccountDataMutation } from '@/store/api/accountApi';
+import { useRouter } from 'next/navigation';
 
 interface StepData {
     label: string;
@@ -9,6 +12,8 @@ interface StepData {
 }
 
 const RegisterPage: React.FC = () => {
+    const router = useRouter();
+
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [companyName, setCompanyName] = useState('');
@@ -24,8 +29,37 @@ const RegisterPage: React.FC = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [activeStep, setActiveStep] = useState(0);
 
-    const handleRegister = (event: FormEvent) => {
+    const [createAccount, { isLoading: isCreatingAccount }] = useCreateAccountMutation();
+    const [createAccountData, { isLoading: isCreatingAccountData }] = useCreateAccountDataMutation();
+
+    const handleRegister = async (event: FormEvent) => {
         event.preventDefault();
+
+        const savedAccount = await createAccount({
+            email,
+            password,
+        });
+
+        if (!('data' in savedAccount)) {
+            return;
+        }
+
+        await createAccountData({
+            first_name: firstName,
+            last_name: lastName,
+            company_name: companyName,
+            company_reg_number: companyRegNumber,
+            vat_number: vatNumber,
+            address,
+            city,
+            zip_code: zipCode,
+            country,
+            phone,
+            email,
+            user_id: savedAccount.data?.id,
+        });
+
+        router.push('/');
     };
 
     const steps: StepData[] = [
@@ -158,7 +192,11 @@ const RegisterPage: React.FC = () => {
                 </Button>
             )}
             {activeStep === steps.length - 1 && (
-                <Button type="submit" variant="contained" color="primary">
+                <Button
+                    disabled={isCreatingAccount || isCreatingAccountData}
+                    type="submit"
+                    variant="contained"
+                    color="primary">
                     Register
                 </Button>
             )}
@@ -167,11 +205,11 @@ const RegisterPage: React.FC = () => {
 
     return (
         <form onSubmit={handleRegister}>
-            <Stack 
-                justifyContent="start" 
-                alignItems="center" 
-                height="100vh" 
-                width="100vw" 
+            <Stack
+                justifyContent="start"
+                alignItems="center"
+                height="100vh"
+                width="100vw"
                 spacing={10}
                 mt={5}>
                 <Stack direction="row" alignItems="center" spacing={2}>
