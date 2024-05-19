@@ -167,7 +167,13 @@ const RegisterPage: React.FC = () => {
 
     return (
         <form onSubmit={handleRegister}>
-            <Stack justifyContent="space-evenly" alignItems="center" height="100vh" width="100vw">
+            <Stack 
+                justifyContent="start" 
+                alignItems="center" 
+                height="100vh" 
+                width="100vw" 
+                spacing={10}
+                mt={5}>
                 <Stack direction="row" alignItems="center" spacing={2}>
                     <Typography variant="h4">Create an account</Typography>
                 </Stack>
