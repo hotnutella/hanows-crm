@@ -3,6 +3,12 @@ import { RootState } from '../index';
 
 interface AccountState {
     invoiceCount: number;
+    accessToken?: string;
+}
+
+interface Tokens {
+    accessToken: string;
+    refreshToken: string;
 }
 
 const initialState: AccountState = {
@@ -15,6 +21,13 @@ const accountSlice = createSlice({
     reducers: {
         setInvoiceCount: (state, action: PayloadAction<number>) => {
             state.invoiceCount = action.payload;
+        },
+        setAccessToken: (state, action: PayloadAction<string>) => {
+            state.accessToken = action.payload;
+        },
+        setTokens: (state, action: PayloadAction<Tokens>) => {
+            state.accessToken = action.payload.accessToken;
+            localStorage.setItem('refreshToken', action.payload.refreshToken);
         }
     },
 });
@@ -31,8 +44,11 @@ export const getInvoiceNumber = (state: RootState) => {
     return `${year}${month}${nextInvoice}`;
 }
 
+export const getAccessToken = (state: RootState) => state.account.accessToken;
+
 export const {
     setInvoiceCount,
+    setTokens,
 } = accountSlice.actions;
 
 export default accountSlice.reducer;
