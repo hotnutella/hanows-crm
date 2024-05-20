@@ -1,9 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../index';
+import { AccountData } from '../api/accountApi';
 
 interface AccountState {
     invoiceCount: number;
     accessToken?: string;
+    data?: AccountData;
 }
 
 interface Tokens {
@@ -22,13 +24,13 @@ const accountSlice = createSlice({
         setInvoiceCount: (state, action: PayloadAction<number>) => {
             state.invoiceCount = action.payload;
         },
-        setAccessToken: (state, action: PayloadAction<string>) => {
-            state.accessToken = action.payload;
-        },
         setTokens: (state, action: PayloadAction<Tokens>) => {
             state.accessToken = action.payload.accessToken;
             localStorage.setItem('refreshToken', action.payload.refreshToken);
-        }
+        },
+        setAccountData: (state, action: PayloadAction<AccountData>) => {
+            state.data = action.payload;
+        },
     },
 });
 
@@ -45,10 +47,12 @@ export const getInvoiceNumber = (state: RootState) => {
 }
 
 export const getAccessToken = (state: RootState) => state.account.accessToken;
+export const getAccountData = (state: RootState) => state.account.data;
 
 export const {
     setInvoiceCount,
     setTokens,
+    setAccountData,
 } = accountSlice.actions;
 
 export default accountSlice.reducer;

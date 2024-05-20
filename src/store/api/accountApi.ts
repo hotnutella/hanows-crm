@@ -1,7 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQuery } from './baseQuery';
 
-interface AccountData {
+export interface AccountData {
     first_name: string;
     last_name: string;
     company_name: string;
@@ -24,6 +24,7 @@ export const accountApi = createApi({
     endpoints: (builder) => ({
         getAccountData: builder.query<AccountData, void>({
             query: () => 'account_data',
+            transformResponse: (response: AccountData[]) => response[0], 
             providesTags: ['ACCOUNT_DATA'],
         }),
         createAccountData: builder.mutation<void, AccountData>({
@@ -46,7 +47,7 @@ export const accountApi = createApi({
 });
 
 export const {
-    useGetAccountDataQuery,
+    useLazyGetAccountDataQuery,
     useCreateAccountDataMutation,
     useUpdateAccountMutation,
 } = accountApi;

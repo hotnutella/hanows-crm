@@ -1,6 +1,7 @@
 import { AppDispatch } from '@/store';
+import { useLazyGetAccountDataQuery } from '@/store/api/accountApi';
 import { useRefreshMutation } from '@/store/api/authApi';
-import { setTokens } from '@/store/slices/accountSlice';
+import { setAccountData, setTokens } from '@/store/slices/accountSlice';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux';
@@ -9,6 +10,8 @@ const TokenHandler = () => {
     const router = useRouter();
     const [refresh] = useRefreshMutation();
     const dispatch = useDispatch<AppDispatch>();
+
+    const [getAccountData] = useLazyGetAccountDataQuery();
 
     useEffect(() => {
         const handleTokens = async () => {
@@ -29,6 +32,11 @@ const TokenHandler = () => {
                 accessToken: response.data.access_token,
                 refreshToken: response.data.refresh_token,
             }));
+
+            const accountData = await getAccountData();
+            if ('data' in accountData) {
+                dispatch(setAccountData(accountData.data!));
+            }
 
             router.push('/crm');
         };
