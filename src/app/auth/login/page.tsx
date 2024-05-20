@@ -35,6 +35,7 @@ const LoginPage: React.FC = () => {
         }
 
         dispatch(setTokens(tokens));
+        router.push('/');
     }
 
 
