@@ -5,6 +5,7 @@ import { TextField, Button, Typography, Stack, Stepper, Step, StepLabel } from '
 import { useCreateAccountMutation } from '@/store/api/authApi';
 import { useCreateAccountDataMutation } from '@/store/api/accountApi';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 interface StepData {
     label: string;
@@ -228,6 +229,13 @@ const RegisterPage: React.FC = () => {
                         </Step>
                     ))}
                 </Stepper>
+                <Link
+                    href="/auth/login"
+                    style={{ textDecoration: 'none' }}>
+                    <Typography color="primary">
+                        Already have an account? Login here.
+                    </Typography>
+                </Link>
             </Stack>
         </form >
     );
