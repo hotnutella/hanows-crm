@@ -8,7 +8,11 @@ const supabaseHeaders = {
 
 export const prepareHeaders = (headers: Headers) => {
     headers.set('apikey', supabaseHeaders.apikey);
-    headers.set('Authorization', supabaseHeaders.Authorization);
+
+    if (!headers.has('Authorization')) {
+        headers.set('Authorization', supabaseHeaders.Authorization);
+    }
+    
     headers.set('Prefer', 'return=representation');
     return headers;
 }

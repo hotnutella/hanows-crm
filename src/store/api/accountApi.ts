@@ -22,8 +22,13 @@ export const accountApi = createApi({
     baseQuery,
     tagTypes: ['ACCOUNT_DATA'],
     endpoints: (builder) => ({
-        getAccountData: builder.query<AccountData, void>({
-            query: () => 'account_data',
+        getAccountData: builder.query<AccountData, string>({
+            query: (accessToken) => ({
+                url: 'account_data',
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            }),
             transformResponse: (response: AccountData[]) => response[0], 
             providesTags: ['ACCOUNT_DATA'],
         }),

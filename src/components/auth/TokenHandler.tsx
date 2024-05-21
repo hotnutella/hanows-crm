@@ -33,7 +33,7 @@ const TokenHandler = () => {
                 refreshToken: response.data.refresh_token,
             }));
 
-            const accountData = await getAccountData();
+            const accountData = await getAccountData(response.data.access_token);
             if ('data' in accountData) {
                 dispatch(setAccountData(accountData.data!));
             }
