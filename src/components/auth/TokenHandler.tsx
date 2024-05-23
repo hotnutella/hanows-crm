@@ -1,17 +1,27 @@
 import { AppDispatch } from '@/store';
 import { useLazyGetAccountDataQuery } from '@/store/api/accountApi';
 import { useRefreshMutation } from '@/store/api/authApi';
-import { setAccountData, setTokens } from '@/store/slices/accountSlice';
+import { setAccountData, setEmail, setTokens, setUserId } from '@/store/slices/accountSlice';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-const TokenHandler = () => {
+interface TokenHandlerProps {
+    noRedirect?: boolean;
+}
+
+const TokenHandler: React.FC<TokenHandlerProps> = ({ noRedirect }) => {
     const router = useRouter();
     const [refresh] = useRefreshMutation();
     const dispatch = useDispatch<AppDispatch>();
 
-    const [getAccountData] = useLazyGetAccountDataQuery();
+    const [getAccountApiData] = useLazyGetAccountDataQuery();
+
+    const redirect = (path: string) => {
+        if (!noRedirect) {
+            router.push(path);
+        }
+    }
 
     useEffect(() => {
         const handleTokens = async () => {
@@ -33,12 +43,17 @@ const TokenHandler = () => {
                 refreshToken: response.data.refresh_token,
             }));
 
-            const accountData = await getAccountData(response.data.access_token);
-            if ('data' in accountData) {
+            dispatch(setUserId(response.data.user.id));
+            dispatch(setEmail(response.data.user.email));
+
+            const accountData = await getAccountApiData(response.data.access_token);
+            if ('data' in accountData && accountData.data) {
                 dispatch(setAccountData(accountData.data!));
+                redirect('/crm');
+                return;
             }
 
-            router.push('/crm');
+            redirect('/account');
         };
 
         handleTokens();

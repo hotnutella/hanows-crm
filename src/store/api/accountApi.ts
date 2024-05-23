@@ -1,7 +1,9 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQuery } from './baseQuery';
+import { Auth } from './authApi';
 
 export interface AccountData {
+    id?: string;
     first_name: string;
     last_name: string;
     company_name: string;
@@ -15,7 +17,6 @@ export interface AccountData {
     email: string;
     user_id: string;
 }
-
 
 export const accountApi = createApi({
     reducerPath: 'accountApi',
@@ -32,19 +33,25 @@ export const accountApi = createApi({
             transformResponse: (response: AccountData[]) => response[0], 
             providesTags: ['ACCOUNT_DATA'],
         }),
-        createAccountData: builder.mutation<void, AccountData>({
-            query: (accountData) => ({
+        createAccountData: builder.mutation<void, Auth<AccountData>>({
+            query: ({ data, accessToken }) => ({
                 url: 'account_data',
                 method: 'POST',
-                body: accountData,
+                body: data,
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
             }),
             invalidatesTags: ['ACCOUNT_DATA'],
         }),
-        updateAccount: builder.mutation<AccountData, Partial<AccountData>>({
-            query: (update) => ({
-                url: 'account',
+        updateAccountData: builder.mutation<AccountData, Auth<AccountData>>({
+            query: ({ data, accessToken }) => ({
+                url: `account_data?id=eq.${data.id}`,
                 method: 'PATCH',
-                body: update,
+                body: data,
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                }
             }),
             invalidatesTags: ['ACCOUNT_DATA'],
         }),
@@ -54,5 +61,6 @@ export const accountApi = createApi({
 export const {
     useLazyGetAccountDataQuery,
     useCreateAccountDataMutation,
-    useUpdateAccountMutation,
+    useUpdateAccountDataMutation,
+    useGetAccountDataQuery,
 } = accountApi;

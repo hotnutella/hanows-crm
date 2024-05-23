@@ -66,20 +66,20 @@ const LoginPage: React.FC = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         fullWidth
                     />
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary">
+                        Login
+                    </Button>
+                    <Link
+                        href="/auth/register"
+                        style={{ textDecoration: 'none' }}>
+                        <Typography color="primary">
+                            Don&apos;t have an account? Register here.
+                        </Typography>
+                    </Link>
                 </Stack>
-                <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary">
-                    Login
-                </Button>
-                <Link 
-                    href="/auth/register"
-                    style={{ textDecoration: 'none' }}>
-                    <Typography color="primary">
-                        Don&apos;t have an account? Register here.
-                    </Typography>
-                </Link>
             </Stack>
         </form >
     );

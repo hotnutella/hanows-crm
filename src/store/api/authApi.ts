@@ -1,6 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { prepareHeaders } from './baseQuery';
 
+export interface Auth<T> {
+    data: T;
+    accessToken: string;
+}
+
 interface Credentials {
     id: string;
     email: string;
