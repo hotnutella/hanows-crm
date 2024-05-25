@@ -3,6 +3,7 @@
 import { Box, Grid, useMediaQuery, useTheme } from "@mui/material";
 import '@/styles/global.css';
 import TokenHandler from "@/components/auth/TokenHandler";
+import Sidebar from "@/components/ui/Sidebar";
 
 export default function RootLayout({
     clients,
@@ -23,6 +24,9 @@ export default function RootLayout({
             <Grid container>
                 {!isXs && (
                     <>
+                        <Grid item width={60} minWidth={60}>
+                            <Sidebar />
+                        </Grid>
                         <Grid item width={400} minWidth={400}>
                             <Box height="100vh" overflow="auto">
                                 {clients}
