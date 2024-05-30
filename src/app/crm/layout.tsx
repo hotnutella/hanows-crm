@@ -1,7 +1,6 @@
 'use client';
 
 import { Box, Grid, useMediaQuery, useTheme } from "@mui/material";
-import '@/styles/global.css';
 import TokenHandler from "@/components/auth/TokenHandler";
 import Sidebar from "@/components/ui/Sidebar";
 
@@ -32,7 +31,7 @@ export default function RootLayout({
                                 {clients}
                             </Box>
                         </Grid>
-                        <Grid item xs={12} md>
+                        <Grid item md>
                             <Box height="100vh" overflow="hidden">
                                 {chat}
                             </Box>

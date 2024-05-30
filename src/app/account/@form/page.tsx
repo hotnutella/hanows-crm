@@ -214,8 +214,6 @@ const AccountPage: React.FC = () => {
             <Stack
                 justifyContent="start"
                 alignItems="center"
-                height="100vh"
-                width="100vw"
                 spacing={10}
                 mt={5}>
                 <Stack direction="row" alignItems="center" spacing={2}>
