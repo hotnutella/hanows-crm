@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import React, { useEffect } from 'react';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import { useSelector } from 'react-redux';
+import { getAccessToken } from '@/store/slices/accountSlice';
 
 interface ChatHeaderProps {
     clientId?: number;
@@ -17,21 +19,24 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ clientId, showBackButton }) => 
     const theme = useTheme();
     const isXs = useMediaQuery(theme.breakpoints.down('md'));
 
+    const accessToken = useSelector(getAccessToken) || '';
+
     useEffect(() => {
         async function fetchClient() {
-            if (clientId) {
-                const response = await getClient(String(clientId));
+            if (clientId && accessToken) {
+                const response = await getClient({ data: String(clientId), accessToken });
                 if ('data' in response) {
                     setClient(response.data as Client);
                 }
             }
         }
         fetchClient();
+
         // Only run once
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [accessToken]);
 
-    const width = isXs ? '100%' : 'calc(100% - 400px)';
+    const width = isXs ? '100%' : 'calc(100% - 460px)';
     const titleFontSize = isXs ? '1rem' : '2rem';
     const titleLineHeight = isXs ? 2.5 : 1.5;
 

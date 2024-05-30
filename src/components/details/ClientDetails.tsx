@@ -1,6 +1,8 @@
 import { Client, useUpdateClientMutation, useCreateClientMutation, useLazyGetClientQuery } from '@/store/api/clientsApi';
-import { Autocomplete, Box, Button, Stack, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, Button, Stack, TextField } from '@mui/material';
 import { useRouter } from 'next/navigation';
+import { useSelector } from 'react-redux';
+import { getAccessToken } from '@/store/slices/accountSlice';
 import React, { useEffect } from 'react';
 
 // TODO: Fetch countries from API
@@ -19,6 +21,8 @@ const ClientDetails: React.FC<DetailsContentProps> = ({ clientId }) => {
     const [getClient] = useLazyGetClientQuery();
     const [client, setClient] = React.useState<Client | undefined>(undefined);
 
+    const accessToken = useSelector(getAccessToken) || '';
+
     const [clientName, setClientName] = React.useState('');
     const [clientRegNumber, setClientRegNumber] = React.useState('');
     const [clientVatNumber, setClientVatNumber] = React.useState('');
@@ -33,15 +37,15 @@ const ClientDetails: React.FC<DetailsContentProps> = ({ clientId }) => {
 
     useEffect(() => {
         async function fetchData() {
-            if (clientId) {
-                const response = await getClient(String(clientId));
+            if (clientId && accessToken) {
+                const response = await getClient({ data: String(clientId), accessToken});
                 if ('data' in response) {
                     setClient(response.data as Client);
                 }
             }
         }
         fetchData();
-    }, [clientId, getClient]);
+    }, [clientId, getClient, accessToken]);
 
     useEffect(() => {
         if (client) {
@@ -56,11 +60,11 @@ const ClientDetails: React.FC<DetailsContentProps> = ({ clientId }) => {
         }
     }, [client]);
 
-    const createOrUpdateClient = async (submitData: Client) => {
+    const createOrUpdateClient = async (data: Client) => {
         if (clientId) {
-            updateClient(submitData);
+            updateClient({data, accessToken});
         } else {
-            const newClient = await createClient(submitData);
+            const newClient = await createClient({ data, accessToken });
             if ('data' in newClient) {
                 router.push(`/crm/${newClient.data.id}`);
             }

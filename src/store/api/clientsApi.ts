@@ -1,5 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQuery } from '@/store/api/baseQuery';
+import { Auth } from '@/store/api/authApi';
 
 interface Address {
   line1: string;
@@ -25,26 +26,39 @@ export const clientsApi = createApi({
   baseQuery: baseQuery,
   tagTypes: ['CLIENTS'],
   endpoints: (builder) => ({
-    getClients: builder.query<Client[], void>({
-      query: () => 'clients',
+    getClients: builder.query<Client[], string>({
+      query: (accessToken) => ({
+        url: 'clients',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }),
       transformResponse: (response: Client[]) => {
         return response.sort((a, b) => new Date(b.last_interaction).getTime() - new Date(a.last_interaction).getTime());
       },
       providesTags: ['CLIENTS'],
     }),
-    getClient: builder.query<Client, string>({
-      query: (id) => `clients?id=eq.${id}`,
+    getClient: builder.query<Client, Auth<string>>({
+      query: ({ data, accessToken }) => ({
+        url: `clients?id=eq.${data}`,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }),
       transformResponse: (response: Client[]) => {
         if (!response) return {} as Client;
         return response[0];
       },
       providesTags: ['CLIENTS'],
     }),
-    createClient: builder.mutation<Client, Client>({
-      query: (newClient) => ({
+    createClient: builder.mutation<Client, Auth<Client>>({
+      query: ({ data, accessToken }) => ({
         url: 'clients',
         method: 'POST',
-        body: newClient,
+        body: data,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       }),
       transformResponse: (response: Client[]) => {
         if (!response) return {} as Client;
@@ -52,28 +66,41 @@ export const clientsApi = createApi({
       },
       invalidatesTags: ['CLIENTS'],
     }),
-    updateClient: builder.mutation({
-      query: ({ id, ...update }) => ({
+    updateClient: builder.mutation<Client, Auth<Client>>({
+      query: ({data: { id, ...update }, accessToken}) => ({
         url: `clients?id=eq.${id}`,
         method: 'PATCH',
         body: update,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       }),
+      transformResponse: (response: Client[]) => {
+        if (!response) return {} as Client;
+        return response[0];
+      },
       invalidatesTags: ['CLIENTS'],
     }),
-    deleteClient: builder.mutation({
-      query: (id) => ({
-        url: `clients?id=eq.${id}`,
+    deleteClient: builder.mutation<void, Auth<string>>({
+      query: ({ data, accessToken }) => ({
+        url: `clients?id=eq.${data}`,
         method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       }),
       invalidatesTags: ['CLIENTS'],
     }),
-    bump: builder.mutation<void, Client>({
-      query: ({ id, ...update }) => ({
+    bump: builder.mutation<void, Auth<Client>>({
+      query: ({ data: { id, ...update }, accessToken }) => ({
         url: `clients?id=eq.${id}`,
         method: 'PATCH',
         body: {
           ...update,
           last_interaction: 'now()',
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
         },
       }),
       invalidatesTags: ['CLIENTS'],

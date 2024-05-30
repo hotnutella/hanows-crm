@@ -6,10 +6,12 @@ import { Stack } from '@mui/material';
 import ClientOption from '@/components/clients/ClientOption';
 import ClientsHeader from '@/components/clients/ClientsHeader';
 import { useSelector } from 'react-redux';
+import { getAccessToken } from '@/store/slices/accountSlice';
 import { selectSearchTerm } from '@/store/slices/clientSearchSlice';
 
 const ClientsPage = () => {
-    const { data: clients } = useGetClientsQuery();
+    const accessToken = useSelector(getAccessToken) || '';
+    const { data: clients } = useGetClientsQuery(accessToken);
     const searchTerm = useSelector(selectSearchTerm);
 
     const filteredClients = clients?.filter((client) => {

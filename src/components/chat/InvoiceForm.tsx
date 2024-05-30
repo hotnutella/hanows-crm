@@ -11,6 +11,7 @@ import { getInvoiceNumber } from '@/store/slices/accountSlice'
 import { useGeneratePdfMutation } from '@/store/api/edgeApi'
 import { useBumpMutation, useGetClientQuery } from '@/store/api/clientsApi'
 import { Add } from '@mui/icons-material'
+import { getAccessToken } from '@/store/slices/accountSlice'
 
 interface InvoiceFormProps {
     clientId: number
@@ -25,7 +26,9 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
     const theme = useTheme();
     const isXs = useMediaQuery(theme.breakpoints.down('md'));
 
-    const { data: client } = useGetClientQuery(String(clientId));
+    const accessToken = useSelector(getAccessToken) || '';
+
+    const { data: client } = useGetClientQuery({ data: String(clientId), accessToken });
 
     const [createInvoice, { isLoading: creatingInvoice }] = useCreateInvoiceMutation();
     const [createInvoiceLine, { isLoading: creatingInvoiceLine }] = useCreateInvoiceLineMutation();
@@ -84,7 +87,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
 
         dispatch(resetMessage(clientId));
         handleNewLine();
-        bumpClient(client);
+        bumpClient({ data: client, accessToken });
     }
 
     useEffect(() => {
