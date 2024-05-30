@@ -4,7 +4,7 @@ import { useRefreshMutation } from '@/store/api/authApi';
 import { setAccountData, setEmail, setTokens, setUserId } from '@/store/slices/accountSlice';
 import { useRouter, useParams } from 'next/navigation';
 import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 interface TokenHandlerProps {
     noRedirect?: boolean;
