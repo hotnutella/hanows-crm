@@ -5,6 +5,8 @@ import { useGetInvoicesByClientQuery, useGetInvoicesQuery } from '@/store/api/in
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/store';
 import { setInvoiceCount } from '@/store/slices/accountSlice';
+import { useSelector } from 'react-redux';
+import { getAccessToken } from '@/store/slices/accountSlice';
 
 interface ChatContentProps {
     clientId: number;
@@ -12,8 +14,10 @@ interface ChatContentProps {
 }
 
 const ChatContent: React.FC<ChatContentProps> = (props) => {
-    const { data: invoices } = useGetInvoicesByClientQuery(props.clientId);
-    const { data: allInvoices } = useGetInvoicesQuery();
+    const accessToken = useSelector(getAccessToken) || '';
+
+    const { data: invoices } = useGetInvoicesByClientQuery({ data: props.clientId, accessToken });
+    const { data: allInvoices } = useGetInvoicesQuery(accessToken);
     const endOfMessagesRef = useRef<HTMLDivElement | null>(null);
     const dispatch = useDispatch<AppDispatch>();
 

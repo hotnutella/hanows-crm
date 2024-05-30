@@ -7,7 +7,7 @@ import { AppDispatch, RootState } from '@/store'
 import { addLine, resetMessage, getLines, addToGeneratingInvoicesList, removeFromGeneratingInvoicesList } from '@/store/slices/messageSlice'
 import { useCreateInvoiceMutation } from '@/store/api/invoicesApi'
 import { InvoiceLine, useCreateInvoiceLineMutation } from '@/store/api/invoiceLinesApi'
-import { getInvoiceNumber } from '@/store/slices/accountSlice'
+import { getInvoiceNumber, getUserId } from '@/store/slices/accountSlice'
 import { useGeneratePdfMutation } from '@/store/api/edgeApi'
 import { useBumpMutation, useGetClientQuery } from '@/store/api/clientsApi'
 import { Add } from '@mui/icons-material'
@@ -27,6 +27,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
     const isXs = useMediaQuery(theme.breakpoints.down('md'));
 
     const accessToken = useSelector(getAccessToken) || '';
+    const userId = useSelector(getUserId) || '';
 
     const { data: client } = useGetClientQuery({ data: String(clientId), accessToken });
 
@@ -49,7 +50,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
             return;
         }
 
-        const savedInvoice = await createInvoice({
+        const data = {
             client_id: clientId,
             invoice_number: invoiceNumber,
             issue_date: new Date().toISOString(),
@@ -58,7 +59,9 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
             total_amount: Object.values(filteredLines).reduce((acc, line) => {
                 return acc + (line.quantity * line.unitPrice + line.quantity * line.unitPrice * line.vat / 100);
             }, 0)
-        });
+        }
+
+        const savedInvoice = await createInvoice({ data, accessToken });
 
         if (!('data' in savedInvoice)) {
             return;
@@ -68,13 +71,14 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
         const invoiceLines: InvoiceLine[] = [];
 
         await Promise.all(Object.values(filteredLines).map(async (line) => {
-            const savedLine = await createInvoiceLine({
+            const data = {
                 invoice_id: invoiceId,
                 description: line.lineText,
                 quantity: line.quantity,
                 unit_price: line.unitPrice,
                 vat: line.vat
-            });
+            }
+            const savedLine = await createInvoiceLine({ data, accessToken });
 
             if ('data' in savedLine) {
                 invoiceLines.push(savedLine.data);
@@ -82,7 +86,10 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
         }));
 
         dispatch(addToGeneratingInvoicesList(invoiceId));
-        await generatePdf({ invoice: savedInvoice.data, invoiceLines, client });
+        await generatePdf({
+            data: { accountId: userId, invoice: savedInvoice.data, invoiceLines, client },
+            accessToken
+        });
         dispatch(removeFromGeneratingInvoicesList(invoiceId));
 
         dispatch(resetMessage(clientId));

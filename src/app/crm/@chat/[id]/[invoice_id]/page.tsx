@@ -3,6 +3,8 @@
 import React from 'react';
 import { useGetInvoiceQuery } from '@/store/api/invoicesApi';
 import ChatHeader from '@/components/chat/ChatHeader';
+import { useSelector } from 'react-redux';
+import { getAccessToken } from '@/store/slices/accountSlice';
 
 interface InvoicePageProps {
     params: {
@@ -12,8 +14,10 @@ interface InvoicePageProps {
 }
 
 const InvoicePage: React.FC<InvoicePageProps> = ({ params }) => {
+    const accessToken = useSelector(getAccessToken) || '';
+
     const { id, invoice_id } = params;
-    const { data: invoice } = useGetInvoiceQuery(+invoice_id);
+    const { data: invoice } = useGetInvoiceQuery({ data: +invoice_id, accessToken });
 
     return (
         <>

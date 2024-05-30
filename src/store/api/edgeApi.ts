@@ -3,8 +3,10 @@ import { Invoice } from './invoicesApi';
 import { prepareHeaders } from './baseQuery';
 import { InvoiceLine } from './invoiceLinesApi';
 import { Client } from './clientsApi';
+import { Auth } from './authApi';
 
 interface GeneratePdfParams {
+    accountId: string;
     invoice: Invoice;
     invoiceLines: InvoiceLine[];
     client: Client;
@@ -22,11 +24,14 @@ export const edgeApi = createApi({
         }
     }),
     endpoints: (builder) => ({
-        generatePdf: builder.mutation<void, GeneratePdfParams>({
-            query: (params) => ({
+        generatePdf: builder.mutation<void, Auth<GeneratePdfParams>>({
+            query: ({ data, accessToken }) => ({
                 url: '/generatePdf',
                 method: 'POST',
-                body: params,
+                body: data,
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
             }),
         }),
     }),

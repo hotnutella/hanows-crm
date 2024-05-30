@@ -8,13 +8,15 @@ import { useSelector } from 'react-redux';
 import { getIsGeneratingPdf } from '@/store/slices/messageSlice';
 import { RootState } from '@/store';
 import Ribbon from './Ribbon';
+import { getAccessToken } from '@/store/slices/accountSlice';
 
 interface InvoiceMessageProps {
     invoice: Invoice;
 }
 
 const InvoiceMessage: React.FC<InvoiceMessageProps> = ({ invoice }) => {
-    const { data: invoiceLines } = useGetInvoiceLinesByInvoiceQuery(invoice.id);
+    const accessToken = useSelector(getAccessToken) || '';
+    const { data: invoiceLines } = useGetInvoiceLinesByInvoiceQuery({ data: invoice.id, accessToken });
     const isGeneratingPdf = useSelector((state: RootState) => getIsGeneratingPdf(state, invoice.id));
     const router = useRouter();
 
