@@ -16,9 +16,7 @@ export default function RootLayout({
     const theme = useTheme();
     const isXs = useMediaQuery(theme.breakpoints.down('md'));
     const params = useParams();
-
-    console.log(params);
-
+    
     return (
         <>
             <Grid container>
