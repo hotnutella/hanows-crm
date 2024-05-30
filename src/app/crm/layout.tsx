@@ -16,7 +16,7 @@ export default function RootLayout({
     const theme = useTheme();
     const isXs = useMediaQuery(theme.breakpoints.down('md'));
     const params = useParams();
-    
+
     return (
         <>
             <Grid container>
@@ -26,7 +26,7 @@ export default function RootLayout({
                             <Sidebar />
                         </Grid>
                         <Grid item width={400} minWidth={400}>
-                            <Box height="100vh" overflow="auto">
+                            <Box height="100vh" overflow="auto" borderRight="1px solid #eee">
                                 {clients}
                             </Box>
                         </Grid>
