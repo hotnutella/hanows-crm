@@ -2,7 +2,7 @@ import { AppDispatch } from '@/store';
 import { useLazyGetAccountDataQuery } from '@/store/api/accountApi';
 import { useRefreshMutation } from '@/store/api/authApi';
 import { setAccountData, setEmail, setTokens, setUserId } from '@/store/slices/accountSlice';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -12,6 +12,7 @@ interface TokenHandlerProps {
 
 const TokenHandler: React.FC<TokenHandlerProps> = ({ noRedirect }) => {
     const router = useRouter();
+    const params = useParams();
     const [refresh] = useRefreshMutation();
     const dispatch = useDispatch<AppDispatch>();
 
@@ -49,7 +50,9 @@ const TokenHandler: React.FC<TokenHandlerProps> = ({ noRedirect }) => {
             const accountData = await getAccountApiData(response.data.access_token);
             if ('data' in accountData && accountData.data) {
                 dispatch(setAccountData(accountData.data!));
-                redirect('/crm');
+                if (!params.id) {
+                    redirect('/crm');
+                }
                 return;
             }
 

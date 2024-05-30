@@ -6,7 +6,11 @@ import ChatIcon from '@mui/icons-material/Chat';
 import styles from './Sidebar.module.css';
 import { useRouter } from 'next/navigation';
 
-const Sidebar = () => {
+interface SidebarProps {
+    direction?: 'row' | 'column';
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ direction }) => {
     const router = useRouter();
 
     const handleProfileClick = () => {
@@ -21,10 +25,13 @@ const Sidebar = () => {
         localStorage.removeItem('refreshToken');
         router.push('/');
     }
+
+    const dir = direction || 'column';
+    const className = dir === 'row' ? `${styles.sidebar} ${styles.row}` : `${styles.sidebar} ${styles.column}`;
     
     return (
-        <Stack className={styles.sidebar} justifyContent="space-between">
-            <Stack>
+        <Stack className={className} justifyContent="space-between" direction={dir}>
+            <Stack direction={dir}>
                 <Tooltip title="Profile">
                     <IconButton className={styles.button} onClick={handleProfileClick}>
                         <AccountCircleIcon />
@@ -36,7 +43,7 @@ const Sidebar = () => {
                     </IconButton>
                 </Tooltip>
             </Stack>
-            <Stack>
+            <Stack direction={dir}>
                 <Tooltip title="Logout">
                     <IconButton className={styles.button} onClick={handleLogoutClick}>
                         <LogoutIcon />

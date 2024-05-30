@@ -1,7 +1,7 @@
 'use client';
 
 import Sidebar from '@/components/ui/Sidebar';
-import { Box, Grid, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Grid, Stack, useMediaQuery, useTheme } from '@mui/material';
 import React from 'react';
 
 export default function AccountLayout({
@@ -28,9 +28,10 @@ export default function AccountLayout({
             )}
             {isXs && (
                 <Grid item xs={12}>
-                    <Box height="100vh" overflow="auto">
+                    <Stack height="100vh" overflow="auto" justifyContent="space-between">
                         {form}
-                    </Box>
+                        <Sidebar direction='row' />
+                    </Stack>
                 </Grid>
             )}
         </Grid>
