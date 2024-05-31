@@ -1,5 +1,3 @@
-// Import PDFDocument from pdf-lib using a CDN that is compatible with Deno
-import { PDFDocument } from 'https://cdn.skypack.dev/pdf-lib@1.16.0';
 import { corsHeaders } from '../_shared/cors.ts';
 import { renderLayout } from './layout.ts';
 
@@ -22,13 +20,13 @@ Deno.serve(async (request: Request): Promise<Response> => {
     // Process POST request to generate and upload PDF
     if (request.method === 'POST') {
       const requestData = await request.json();
-      const { accountId, invoice, invoiceLines, client } = requestData;
+      const { accountData, invoice, invoiceLines, client } = requestData;
 
-      const pdfDoc = await renderLayout(invoice, invoiceLines, client);
+      const pdfDoc = await renderLayout(invoice, invoiceLines, client, accountData);
       const pdfBytes = await pdfDoc.save();
 
       // Create a unique name for the PDF file
-      const fileName = `${accountId}${invoice.invoice_number}.pdf`;
+      const fileName = `${accountData.accountId}${invoice.invoice_number}.pdf`;
 
       const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
       const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");

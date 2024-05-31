@@ -4,9 +4,10 @@ import { prepareHeaders } from './baseQuery';
 import { InvoiceLine } from './invoiceLinesApi';
 import { Client } from './clientsApi';
 import { Auth } from './authApi';
+import { AccountData } from './accountApi';
 
 interface GeneratePdfParams {
-    accountId: string;
+    accountData: AccountData;
     invoice: Invoice;
     invoiceLines: InvoiceLine[];
     client: Client;

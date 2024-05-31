@@ -7,7 +7,7 @@ import { AppDispatch, RootState } from '@/store'
 import { addLine, resetMessage, getLines, addToGeneratingInvoicesList, removeFromGeneratingInvoicesList } from '@/store/slices/messageSlice'
 import { useCreateInvoiceMutation } from '@/store/api/invoicesApi'
 import { InvoiceLine, useCreateInvoiceLineMutation } from '@/store/api/invoiceLinesApi'
-import { getInvoiceNumber, getUserId } from '@/store/slices/accountSlice'
+import { getAccountData, getInvoiceNumber, getUserId } from '@/store/slices/accountSlice'
 import { useGeneratePdfMutation } from '@/store/api/edgeApi'
 import { useBumpMutation, useGetClientQuery } from '@/store/api/clientsApi'
 import { Add } from '@mui/icons-material'
@@ -27,7 +27,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
     const isXs = useMediaQuery(theme.breakpoints.down('md'));
 
     const accessToken = useSelector(getAccessToken) || '';
-    const userId = useSelector(getUserId) || '';
+    const accountData = useSelector(getAccountData)!;
 
     const { data: client } = useGetClientQuery({ data: String(clientId), accessToken });
 
@@ -87,7 +87,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
 
         dispatch(addToGeneratingInvoicesList(invoiceId));
         await generatePdf({
-            data: { accountId: userId, invoice: savedInvoice.data, invoiceLines, client },
+            data: { accountData, invoice: savedInvoice.data, invoiceLines, client },
             accessToken
         });
         dispatch(removeFromGeneratingInvoicesList(invoiceId));

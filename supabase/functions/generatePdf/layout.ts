@@ -1,6 +1,7 @@
 import { Invoice } from '@/store/api/invoicesApi';
 import { InvoiceLine } from '@/store/api/invoiceLinesApi';
 import { Client } from '@/store/api/clientsApi';
+import { AccountData } from '@/store/api/accountApi';
 import { PDFDocument, StandardFonts } from 'https://cdn.skypack.dev/pdf-lib@1.16.0';
 
 const alignRight = (x: number, text: string, fieldWidth: number, font: typeof StandardFonts, size = 12) => {
@@ -13,7 +14,11 @@ const formatDate = (date: string) => {
     return `${day}.${month}.${year}`;
 }
 
-export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[], client: Client) => {
+const formatAddress = (address: string, city: string, zip_code: string) => {
+    return `${address}, ${zip_code} ${city}`;
+}
+
+export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[], client: Client, accountData: AccountData) => {
     const pdfDoc = await PDFDocument.create();
     const page = pdfDoc.addPage();
     const { width, height } = page.getSize();
@@ -27,7 +32,7 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
     const mediumFieldWidth = 100;
     const largeFieldWidth = 180;
 
-    const companyName = 'Hanows OÜ'; // TODO: replace with actual company name
+    const companyName = accountData.company_name;
     const helvetica = pdfDoc.embedStandardFont(StandardFonts.Helvetica);
     const helveticaBold = pdfDoc.embedStandardFont(StandardFonts.HelveticaBold);
 
@@ -412,7 +417,7 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
     });
 
     y -= 12;
-    txt = 'Kivimurru 7-12, 11411, Tallinn'; // TODO: replace with actual company address
+    txt = formatAddress(accountData.address, accountData.city, accountData.zip_code);
     page.drawText(txt, {
         x: left,
         y,
@@ -420,7 +425,7 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
     });
 
     y -= 12;
-    txt = 'Reg number: 12871527'; // TODO: replace with actual company reg number
+    txt = `Reg number: ${accountData.company_reg_number}`;
     page.drawText(txt, {
         x: left,
         y,
@@ -428,7 +433,7 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
     });
 
     y -= 12;
-    txt = 'VAT number: EE102714100'; // TODO: replace with actual company VAT number
+    txt = `VAT number: ${accountData.vat_number}`;
     page.drawText(txt, {
         x: left,
         y,
@@ -438,7 +443,7 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
     // Contact block
     y = bottom - 12;
     x = right - largeFieldWidth;
-    txt = 'E-mail: deniss.suhhanov@gmail.com'; // TODO: replace with actual company email
+    txt = `E-mail: ${accountData.email}`;
     page.drawText(txt, {
         x: alignRight(x, txt, largeFieldWidth, helvetica, 10),
         y,
@@ -446,7 +451,7 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
     });
 
     y -= 12;
-    txt = 'Phone: +372 xxxxxxxx'; // TODO: replace with actual company phone number
+    txt = `Phone: ${accountData.phone}`;
     page.drawText(txt, {
         x: alignRight(x, txt, largeFieldWidth, helvetica, 10),
         y,
