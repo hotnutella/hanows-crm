@@ -5,12 +5,14 @@ import { InvoiceLine } from './invoiceLinesApi';
 import { Client } from './clientsApi';
 import { Auth } from './authApi';
 import { AccountData } from './accountApi';
+import { Bank } from './banksApi';
 
 interface GeneratePdfParams {
     accountData: AccountData;
     invoice: Invoice;
     invoiceLines: InvoiceLine[];
     client: Client;
+    bank: Bank;
 }
 
 export const edgeApi = createApi({

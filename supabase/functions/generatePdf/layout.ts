@@ -2,6 +2,7 @@ import { Invoice } from '@/store/api/invoicesApi';
 import { InvoiceLine } from '@/store/api/invoiceLinesApi';
 import { Client } from '@/store/api/clientsApi';
 import { AccountData } from '@/store/api/accountApi';
+import { Bank } from '@/store/api/banksApi'; 
 import { PDFDocument, StandardFonts } from 'https://cdn.skypack.dev/pdf-lib@1.16.0';
 
 const alignRight = (x: number, text: string, fieldWidth: number, font: typeof StandardFonts, size = 12) => {
@@ -18,7 +19,7 @@ const formatAddress = (address: string, city: string, zip_code: string) => {
     return `${address}, ${zip_code} ${city}`;
 }
 
-export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[], client: Client, accountData: AccountData) => {
+export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[], client: Client, accountData: AccountData, bank: Bank) => {
     const pdfDoc = await PDFDocument.create();
     const page = pdfDoc.addPage();
     const { width, height } = page.getSize();
@@ -210,6 +211,34 @@ export const renderLayout = async (invoice: Invoice, invoiceLines: InvoiceLine[]
     x += mediumFieldWidth;
     page.drawText(txt, {
         x: alignRight(x, txt, mediumFieldWidth, helvetica),
+        y,
+        size: 12,
+    });
+
+    // Bank block
+    y -= 30;
+    x = right - 2 * mediumFieldWidth;
+    txt = bank.name;
+    page.drawText(txt, {
+        x,
+        y,
+        size: 12,
+        font: helveticaBold,
+        bold: true,
+    });
+
+    y -= 15;
+    txt = `IBAN: ${accountData.iban}`;
+    page.drawText(txt, {
+        x,
+        y,
+        size: 12,
+    });
+
+    y -= 15;
+    txt = `SWIFT: ${bank.swift}`;
+    page.drawText(txt, {
+        x,
         y,
         size: 12,
     });

@@ -9,6 +9,8 @@ import accountReducer from './slices/accountSlice';
 import { edgeApi } from './api/edgeApi';
 import { authApi } from './api/authApi';
 import { accountApi } from './api/accountApi';
+import { countriesApi } from './api/countriesApi';
+import { banksApi } from './api/banksApi';
 
 const rootReducer = combineReducers({
     account: accountReducer,
@@ -20,6 +22,8 @@ const rootReducer = combineReducers({
     [edgeApi.reducerPath]: edgeApi.reducer,
     [authApi.reducerPath]: authApi.reducer,
     [accountApi.reducerPath]: accountApi.reducer,
+    [countriesApi.reducerPath]: countriesApi.reducer,
+    [banksApi.reducerPath]: banksApi.reducer,
 });
 
 export const store = configureStore({
@@ -32,6 +36,8 @@ export const store = configureStore({
             .concat(edgeApi.middleware)
             .concat(authApi.middleware)
             .concat(accountApi.middleware)
+            .concat(countriesApi.middleware)
+            .concat(banksApi.middleware)
 });
 
 setupListeners(store.dispatch);

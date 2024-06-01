@@ -12,6 +12,7 @@ import { useGeneratePdfMutation } from '@/store/api/edgeApi'
 import { useBumpMutation, useGetClientQuery } from '@/store/api/clientsApi'
 import { Add } from '@mui/icons-material'
 import { getAccessToken } from '@/store/slices/accountSlice'
+import { Bank, useGetBanksQuery, useLazyGetBanksQuery } from '@/store/api/banksApi'
 
 interface InvoiceFormProps {
     clientId: number
@@ -35,6 +36,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
     const [createInvoiceLine, { isLoading: creatingInvoiceLine }] = useCreateInvoiceLineMutation();
     const [generatePdf, { isLoading: generatingPdf }] = useGeneratePdfMutation();
     const [bumpClient, { isLoading: isBumpingClient }] = useBumpMutation();
+    const [getBanks] = useLazyGetBanksQuery();
 
     const handleNewLine = () => {
         dispatch(addLine({ clientId, data: { lineText: '', quantity: 0, unitPrice: 0, vat: 0 } }));
@@ -86,8 +88,11 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
         }));
 
         dispatch(addToGeneratingInvoicesList(invoiceId));
+
+        const { data: banks } = await getBanks(accessToken);
+        const bank = banks?.find(bank => bank.id === accountData.bank_id) || {} as Bank;
         await generatePdf({
-            data: { accountData, invoice: savedInvoice.data, invoiceLines, client },
+            data: { accountData, invoice: savedInvoice.data, invoiceLines, client, bank },
             accessToken
         });
         dispatch(removeFromGeneratingInvoicesList(invoiceId));

@@ -12,9 +12,11 @@ export interface AccountData {
     address: string;
     city: string;
     zip_code: string;
-    country: string;
+    country_id: string;
     phone: string;
     email: string;
+    iban: string;
+    bank_id: string;
     user_id: string;
 }
 

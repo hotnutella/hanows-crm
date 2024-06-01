@@ -20,13 +20,13 @@ Deno.serve(async (request: Request): Promise<Response> => {
     // Process POST request to generate and upload PDF
     if (request.method === 'POST') {
       const requestData = await request.json();
-      const { accountData, invoice, invoiceLines, client } = requestData;
+      const { accountData, invoice, invoiceLines, client, bank } = requestData;
 
-      const pdfDoc = await renderLayout(invoice, invoiceLines, client, accountData);
+      const pdfDoc = await renderLayout(invoice, invoiceLines, client, accountData, bank);
       const pdfBytes = await pdfDoc.save();
 
       // Create a unique name for the PDF file
-      const fileName = `${accountData.accountId}${invoice.invoice_number}.pdf`;
+      const fileName = `${accountData.user_id}${invoice.invoice_number}.pdf`;
 
       const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
       const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");

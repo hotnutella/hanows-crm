@@ -1,8 +1,10 @@
 'use client';
 
 import React, { FormEvent, useEffect, useState } from 'react';
-import { TextField, Button, Typography, Stack, Stepper, Step, StepLabel } from '@mui/material';
+import { TextField, Button, Typography, Stack, Stepper, Step, StepLabel, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { useCreateAccountDataMutation, useUpdateAccountDataMutation } from '@/store/api/accountApi';
+import { Country, useLazyGetCountriesQuery } from '@/store/api/countriesApi';
+import { Bank, useLazyGetBanksQuery } from '@/store/api/banksApi';
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { getAccessToken, getAccountData, getEmail, getUserId } from '@/store/slices/accountSlice';
@@ -24,10 +26,15 @@ const AccountPage: React.FC = () => {
     const [address, setAddress] = useState('');
     const [city, setCity] = useState('');
     const [zipCode, setZipCode] = useState('');
-    const [country, setCountry] = useState('');
+    const [countryId, setCountryId] = useState('');
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
+    const [iban, setIban] = useState('');
+    const [bankId, setBankId] = useState('');
     const [activeStep, setActiveStep] = useState(0);
+
+    const [countries, setCountries] = useState<Country[]>([]);
+    const [banks, setBanks] = useState<Bank[]>([]);
 
     const [createAccountData, { isLoading: isCreatingAccountData }] = useCreateAccountDataMutation();
     const [updateAccountData, { isLoading: isUpdatingAccountData }] = useUpdateAccountDataMutation();
@@ -36,6 +43,9 @@ const AccountPage: React.FC = () => {
     const accountEmail = useSelector(getEmail);
     const accessToken = useSelector(getAccessToken);
     const accountData = useSelector(getAccountData);
+
+    const [getCountries] = useLazyGetCountriesQuery();
+    const [getBanks] = useLazyGetBanksQuery();
 
     const createOrUpdate = accountData ? updateAccountData : createAccountData;
 
@@ -55,9 +65,11 @@ const AccountPage: React.FC = () => {
             address,
             city,
             zip_code: zipCode,
-            country,
+            country_id: countryId,
             phone,
             email,
+            iban,
+            bank_id: bankId,
             user_id: userId,
         }
 
@@ -65,6 +77,27 @@ const AccountPage: React.FC = () => {
 
         router.push('/');
     };
+
+    useEffect(() => {
+        async function fetchData() {
+            if (!accessToken) {
+                return;
+            }
+            const countries = await getCountries(accessToken);
+            if ('data' in countries && countries.data) {
+                setCountries(countries.data);
+            }
+
+            const banks = await getBanks(accessToken);
+            if ('data' in banks && banks.data) {
+                setBanks(banks.data);
+            }
+        }
+
+        fetchData();
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [accessToken]);
 
     useEffect(() => {
         if (accountData) {
@@ -76,9 +109,11 @@ const AccountPage: React.FC = () => {
             setAddress(accountData.address);
             setCity(accountData.city);
             setZipCode(accountData.zip_code);
-            setCountry(accountData.country);
+            setCountryId(accountData.country_id || '');
             setPhone(accountData.phone);
             setEmail(accountData.email);
+            setIban(accountData.iban || '');
+            setBankId(accountData.bank_id || '');
         }
     }, [accountData]);
 
@@ -158,13 +193,20 @@ const AccountPage: React.FC = () => {
                     onChange={(e) => setZipCode(e.target.value)}
                     fullWidth
                 />,
-                <TextField
-                    key="country"
-                    label="Country"
-                    value={country}
-                    onChange={(e) => setCountry(e.target.value)}
-                    fullWidth
-                />,
+                <FormControl key="country" fullWidth>
+                    <InputLabel id="country-label">Country</InputLabel>
+                    <Select
+                        labelId="country-label"
+                        label="Country"
+                        value={countryId}
+                        onChange={(e) => setCountryId(e.target.value as string)}
+                        fullWidth
+                    >
+                        {countries.map((country) => (
+                            <MenuItem key={country.id} value={country.id}>{country.name}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>,
                 <TextField
                     key="phone"
                     label="Phone"
@@ -180,6 +222,32 @@ const AccountPage: React.FC = () => {
                     disabled
                     fullWidth
                 />,
+            ],
+        },
+        {
+            label: 'Bank information',
+            fields: [
+                <TextField
+                    key="iban"
+                    label="IBAN"
+                    value={iban}
+                    onChange={(e) => setIban(e.target.value)}
+                    fullWidth
+                />,
+                <FormControl key="bank" fullWidth>
+                    <InputLabel id="bank-label">Bank</InputLabel>
+                    <Select
+                        labelId="bank-label"
+                        label="Bank"
+                        value={bankId}
+                        onChange={(e) => setBankId(e.target.value as string)}
+                        fullWidth
+                    >
+                        {banks.map((bank) => (
+                            <MenuItem key={bank.id} value={bank.id}>{bank.name}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>,
             ],
         }
     ];
