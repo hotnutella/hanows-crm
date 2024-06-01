@@ -17,3 +17,11 @@
     opacity: 0.5;
     cursor: not-allowed;
 }
+
+.actions {
+    visibility: hidden;
+}
+
+div:has(> .invoice):hover .actions {
+    visibility: visible;
+}
