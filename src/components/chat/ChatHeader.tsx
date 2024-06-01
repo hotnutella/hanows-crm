@@ -28,6 +28,9 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ clientId, showBackButton }) => 
                 if ('data' in response) {
                     setClient(response.data as Client);
                 }
+                if ('error' in response) {
+                    router.push('/');
+                }
             }
         }
         fetchClient();
