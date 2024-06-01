@@ -32,21 +32,7 @@ const InvoiceMessage: React.FC<InvoiceMessageProps> = ({ invoice }) => {
     }
 
     return (
-        <Stack direction="row">
-            {invoice.status === 'draft' && (
-                <Stack direction="column" justifyContent="center" className={styles.actions}>
-                    <Tooltip title="Edit" placement="top">
-                        <IconButton size="large">
-                            <EditIcon />
-                        </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Confirm">
-                        <IconButton size="large">
-                            <CheckIcon />
-                        </IconButton>
-                    </Tooltip>
-                </Stack>
-            )}
+        <Stack direction="row-reverse" width="100%">
             <Paper className={className} onClick={handleClick}>
                 <Stack direction="column" justifyContent="space-between" height="100%">
                     <Typography variant="body2">Invoice {invoice.invoice_number}</Typography>
@@ -66,6 +52,20 @@ const InvoiceMessage: React.FC<InvoiceMessageProps> = ({ invoice }) => {
                 </Stack>
                 {invoice.status === 'draft' && <Ribbon text={invoice.status} />}
             </Paper>
+            {invoice.status === 'draft' && (
+                <Stack direction="column" justifyContent="center" className={styles.actions}>
+                    <Tooltip title="Edit" placement="top">
+                        <IconButton size="large">
+                            <EditIcon />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Confirm">
+                        <IconButton size="large">
+                            <CheckIcon />
+                        </IconButton>
+                    </Tooltip>
+                </Stack>
+            )}
         </Stack>
     );
 };
