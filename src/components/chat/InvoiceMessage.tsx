@@ -6,9 +6,9 @@ import React from 'react';
 import styles from './InvoiceMessage.module.css';
 import { useGetInvoiceLinesByInvoiceQuery } from '@/store/api/invoiceLinesApi';
 import { useRouter } from 'next/navigation';
-import { useSelector } from 'react-redux';
-import { getIsGeneratingPdf } from '@/store/slices/messageSlice';
-import { RootState } from '@/store';
+import { useSelector, useDispatch } from 'react-redux';
+import { getIsGeneratingPdf, editInvoice } from '@/store/slices/messageSlice';
+import { AppDispatch, RootState } from '@/store';
 import Ribbon from './Ribbon';
 import { getAccessToken } from '@/store/slices/accountSlice';
 
@@ -21,9 +21,10 @@ const InvoiceMessage: React.FC<InvoiceMessageProps> = ({ invoice }) => {
     const { data: invoiceLines } = useGetInvoiceLinesByInvoiceQuery({ data: invoice.id, accessToken });
     const isGeneratingPdf = useSelector((state: RootState) => getIsGeneratingPdf(state, invoice.id));
     const router = useRouter();
+    const dispatch = useDispatch<AppDispatch>();
 
     const className = isGeneratingPdf ? `${styles.invoice} ${styles.disabled}` : styles.invoice;
-    const handleClick = () => {
+    const handleInvoiceClick = () => {
         if (isGeneratingPdf) {
             return;
         }
@@ -31,9 +32,27 @@ const InvoiceMessage: React.FC<InvoiceMessageProps> = ({ invoice }) => {
         router.push(`/crm/${invoice.client_id}/${invoice.id}`)
     }
 
+    const handleEditClick = () => {
+        if (!invoiceLines) {
+            return;
+        }
+
+        dispatch(editInvoice({
+            clientId: invoice.client_id,
+            invoiceId: invoice.id,
+            invoiceLines: invoiceLines.map((line) => ({
+                id: line.id,
+                lineText: line.description,
+                quantity: line.quantity,
+                unitPrice: line.unit_price,
+                vat: line.vat,
+            })),
+        }));
+    }
+
     return (
         <Stack direction="row-reverse" width="100%">
-            <Paper className={className} onClick={handleClick}>
+            <Paper className={className} onClick={handleInvoiceClick}>
                 <Stack direction="column" justifyContent="space-between" height="100%">
                     <Typography variant="body2">Invoice {invoice.invoice_number}</Typography>
                     <Box>
@@ -54,7 +73,7 @@ const InvoiceMessage: React.FC<InvoiceMessageProps> = ({ invoice }) => {
             </Paper>
             {invoice.status === 'draft' && (
                 <Stack direction="column" justifyContent="center" className={styles.actions}>
-                    <Tooltip title="Edit" placement="top">
+                    <Tooltip title="Edit" placement="top" onClick={handleEditClick}>
                         <IconButton size="large">
                             <EditIcon />
                         </IconButton>

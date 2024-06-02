@@ -87,6 +87,10 @@ export const invoicesApi = createApi({
           Authorization: `Bearer ${accessToken}`,
         },
       }),
+      transformResponse: (response: Invoice[]) => {
+        if (!response) return {} as Invoice;
+        return response[0];
+      },
       invalidatesTags: ['INVOICES']
     }),
     deleteInvoice: builder.mutation<void, Auth<number>>({
@@ -106,6 +110,7 @@ export const {
   useGetInvoicesQuery,
   useGetInvoicesByClientQuery,
   useGetInvoiceQuery,
+  useLazyGetInvoiceQuery,
   useCreateInvoiceMutation,
   useUpdateInvoiceMutation,
   useDeleteInvoiceMutation,

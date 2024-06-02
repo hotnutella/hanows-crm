@@ -51,15 +51,22 @@ export const invoiceLinesApi = createApi({
         }),
         updateInvoiceLine: builder.mutation<InvoiceLine, Auth<InvoiceLine>>({
             query: ({ data, accessToken }) => ({
-                url: `invoice_lines/${data.id}`,
-                method: 'PUT',
-                body: accessToken,
+                url: `invoice_lines?id=eq.${data.id}`,
+                method: 'PATCH',
+                body: data,
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
             }),
+            transformResponse: (response: InvoiceLine[]) => {
+                if (!response) return {} as InvoiceLine;
+                return response[0];
+            },
             invalidatesTags: ['INVOICE_LINES']
         }),
         deleteInvoiceLine: builder.mutation<void, Auth<number>>({
             query: ({data, accessToken}) => ({
-                url: `invoice_lines/${data}`,
+                url: `invoice_lines?id=eq.${data}`,
                 method: 'DELETE',
                 headers: {
                     Authorization: `Bearer ${accessToken}`,

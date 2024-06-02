@@ -2,17 +2,18 @@ import { Box, Fab, Stack, Tooltip, Typography, useMediaQuery, useTheme } from '@
 import React, { memo, useEffect } from 'react'
 import InvoiceLineForm from './InvoiceLineForm'
 import PostAddIcon from '@mui/icons-material/PostAdd'
+import SaveIcon from '@mui/icons-material/Save'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@/store'
-import { addLine, resetMessage, getLines, addToGeneratingInvoicesList, removeFromGeneratingInvoicesList } from '@/store/slices/messageSlice'
-import { useCreateInvoiceMutation } from '@/store/api/invoicesApi'
-import { InvoiceLine, useCreateInvoiceLineMutation } from '@/store/api/invoiceLinesApi'
-import { getAccountData, getInvoiceNumber, getUserId } from '@/store/slices/accountSlice'
+import { addLine, resetMessage, getLines, addToGeneratingInvoicesList, removeFromGeneratingInvoicesList, getEditingInvoiceId } from '@/store/slices/messageSlice'
+import { Invoice, useCreateInvoiceMutation, useLazyGetInvoiceQuery, useUpdateInvoiceMutation } from '@/store/api/invoicesApi'
+import { InvoiceLine, useCreateInvoiceLineMutation, useUpdateInvoiceLineMutation } from '@/store/api/invoiceLinesApi'
+import { getAccountData, getInvoiceNumber } from '@/store/slices/accountSlice'
 import { useGeneratePdfMutation } from '@/store/api/edgeApi'
-import { useBumpMutation, useGetClientQuery } from '@/store/api/clientsApi'
+import { useBumpMutation, useGetClientQuery, useLazyGetClientQuery } from '@/store/api/clientsApi'
 import { Add } from '@mui/icons-material'
 import { getAccessToken } from '@/store/slices/accountSlice'
-import { Bank, useGetBanksQuery, useLazyGetBanksQuery } from '@/store/api/banksApi'
+import { Bank, useLazyGetBanksQuery } from '@/store/api/banksApi'
 
 interface InvoiceFormProps {
     clientId: number
@@ -22,6 +23,7 @@ interface InvoiceFormProps {
 const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clientId, onHeightChange }) {
     const ref = React.useRef<HTMLDivElement | null>(null);
     const lines = useSelector((state: RootState) => getLines(state, clientId));
+    const editingInvoiceId = useSelector((state: RootState) => getEditingInvoiceId(state, clientId));
     const invoiceNumber = useSelector(getInvoiceNumber);
     const dispatch = useDispatch<AppDispatch>();
     const theme = useTheme();
@@ -33,16 +35,47 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
     const { data: client } = useGetClientQuery({ data: String(clientId), accessToken });
 
     const [createInvoice, { isLoading: creatingInvoice }] = useCreateInvoiceMutation();
+    const [updateInvoice, { isLoading: updatingInvoice }] = useUpdateInvoiceMutation();
     const [createInvoiceLine, { isLoading: creatingInvoiceLine }] = useCreateInvoiceLineMutation();
+    const [updateInvoiceLine, { isLoading: updatingInvoiceLine }] = useUpdateInvoiceLineMutation();
     const [generatePdf, { isLoading: generatingPdf }] = useGeneratePdfMutation();
     const [bumpClient, { isLoading: isBumpingClient }] = useBumpMutation();
     const [getBanks] = useLazyGetBanksQuery();
+    const [getExistingInvoice] = useLazyGetInvoiceQuery();
 
     const handleNewLine = () => {
         dispatch(addLine({ clientId, data: { lineText: '', quantity: 0, unitPrice: 0, vat: 0 } }));
     }
 
-    const handlePreview = async () => {
+    const sumLines = (filteredLines: typeof lines) => {
+        return Object.values(filteredLines).reduce((acc, line) => {
+            return acc + (line.quantity * line.unitPrice + line.quantity * line.unitPrice * line.vat / 100);
+        }, 0);
+    }
+
+    const saveInvoice = async (filteredLines: typeof lines) => {
+        if (editingInvoiceId) {
+            const existingInvoice = await getExistingInvoice({ data: editingInvoiceId, accessToken });
+            const data = {
+                ...existingInvoice.data,
+                total_amount: sumLines(filteredLines)
+            } as Invoice;
+            return await updateInvoice({ data, accessToken });
+        }
+
+        const data = {
+            client_id: clientId,
+            invoice_number: invoiceNumber,
+            issue_date: new Date().toISOString(),
+            due_date: new Date(new Date().setDate(new Date().getDate() + 20)).toISOString(),
+            status: 'draft',
+            total_amount: sumLines(filteredLines)
+        }
+
+        return await createInvoice({ data, accessToken });
+    }
+
+    const handleSave = async () => {
         if (!client) {
             return;
         }
@@ -52,27 +85,37 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
             return;
         }
 
-        const data = {
-            client_id: clientId,
-            invoice_number: invoiceNumber,
-            issue_date: new Date().toISOString(),
-            due_date: new Date(new Date().setDate(new Date().getDate() + 20)).toISOString(),
-            status: 'draft',
-            total_amount: Object.values(filteredLines).reduce((acc, line) => {
-                return acc + (line.quantity * line.unitPrice + line.quantity * line.unitPrice * line.vat / 100);
-            }, 0)
-        }
+        const savedInvoice = await saveInvoice(filteredLines);
 
-        const savedInvoice = await createInvoice({ data, accessToken });
-
-        if (!('data' in savedInvoice)) {
+        console.log(savedInvoice)
+        console.log(filteredLines)
+        if (!('data' in savedInvoice) || !savedInvoice.data?.id) {
             return;
         }
 
         const invoiceId = savedInvoice.data.id;
         const invoiceLines: InvoiceLine[] = [];
 
+        console.log(filteredLines)
+
         await Promise.all(Object.values(filteredLines).map(async (line) => {
+            if (editingInvoiceId && line.id) {
+                const data = {
+                    id: line.id,
+                    invoice_id: invoiceId,
+                    quantity: line.quantity,
+                    unit_price: line.unitPrice,
+                    vat: line.vat,
+                    description: line.lineText
+                }
+                const updatedLine = await updateInvoiceLine({ data, accessToken });
+
+                if ('data' in updatedLine) {
+                    invoiceLines.push(updatedLine.data);
+                }
+
+                return;
+            }
             const data = {
                 invoice_id: invoiceId,
                 description: line.lineText,
@@ -97,9 +140,10 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
         });
         dispatch(removeFromGeneratingInvoicesList(invoiceId));
 
+        await bumpClient({ data: client, accessToken });
         dispatch(resetMessage(clientId));
         handleNewLine();
-        bumpClient({ data: client, accessToken });
+        
     }
 
     useEffect(() => {
@@ -136,11 +180,28 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
                     color="primary"
                     variant="extended"
                     size={isXs ? 'small' : 'large'}
-                    onClick={handlePreview}
+                    onClick={handleSave}
                     disabled={creatingInvoice || creatingInvoiceLine || generatingPdf || isBumpingClient}
                 >
                     <PostAddIcon sx={{ mr: 1 }} />
                     <Typography variant="button">Create Draft</Typography>
+                </Fab>
+            </Tooltip>
+        </Box>
+    );
+
+    const saveButton = (
+        <Box>
+            <Tooltip title="Save invoice" placement="top">
+                <Fab
+                    color="primary"
+                    variant="extended"
+                    size={isXs ? 'small' : 'large'}
+                    onClick={handleSave}
+                    disabled={updatingInvoice || updatingInvoiceLine || generatingPdf || isBumpingClient}
+                >
+                    <SaveIcon sx={{ mr: 1 }} />
+                    <Typography variant="button">Save</Typography>
                 </Fab>
             </Tooltip>
         </Box>
@@ -174,7 +235,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
             {isXs && (
                 <Stack mt="-40px" direction="row" justifyContent="center" gap={1}>
                     {newLineButton}
-                    {previewButton}
+                    {editingInvoiceId ? saveButton : previewButton}
                 </Stack>
             )}
             <Stack direction="row" justifyContent="space-between">
@@ -189,7 +250,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
                 {!isXs && (
                     <Stack direction="row" gap={2}>
                         {newLineButton}
-                        {previewButton}
+                        {editingInvoiceId ? saveButton : previewButton}
                     </Stack>
                 )}
             </Stack>

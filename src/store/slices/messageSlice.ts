@@ -3,6 +3,7 @@ import { RootState } from '../index';
 
 
 interface LineData {
+    id?: number;
     lineText: string;
     quantity: number;
     unitPrice: number;
@@ -39,13 +40,15 @@ interface QuantityPayload extends LinePayloadBase {
     quantity: number;
 }
 
-interface IsGeneratingPdfPayload {
+interface EditInvoicePayload {
     clientId: number;
-    value: boolean;
+    invoiceId: number;
+    invoiceLines: LineData[];
 }
 
 interface MessageState {
     [clientId: number]: {
+        editingInvoiceId?: number;
         lines: {
             [key: number]: LineData;
         },
@@ -99,6 +102,16 @@ const messageSlice = createSlice({
         },
         removeFromGeneratingInvoicesList: (state, action: PayloadAction<number>) => {
             state.generatingInvoices = state.generatingInvoices.filter((id) => id !== action.payload);
+        },
+        editInvoice: (state, action: PayloadAction<EditInvoicePayload>) => {
+            const { clientId, invoiceId, invoiceLines } = action.payload;
+            state[clientId] = {
+                editingInvoiceId: invoiceId,
+                lines: invoiceLines.reduce((acc, line, index) => {
+                    acc[index] = line;
+                    return acc;
+                }, {} as { [key: number]: LineData }),
+            }
         }
     },
 });
@@ -111,6 +124,10 @@ export const getLines = createSelector(
     (state: RootState, clientId: number) => state.message[clientId]?.lines,
     (lines) => lines || {}
 )
+
+export const getEditingInvoiceId = (state: RootState, clientId: number) => {
+    return state.message[clientId]?.editingInvoiceId;
+}
 
 export const getIsGeneratingPdf = (state: RootState, invoiceId: number) => {
     return state.message.generatingInvoices.includes(invoiceId);
@@ -126,5 +143,6 @@ export const {
     resetMessage,
     addToGeneratingInvoicesList,
     removeFromGeneratingInvoicesList,
+    editInvoice,
 } = messageSlice.actions;
 export default messageSlice.reducer;

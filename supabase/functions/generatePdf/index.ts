@@ -8,6 +8,9 @@ Deno.serve(async (request: Request): Promise<Response> => {
     'Content-Type': 'application/json'
   };
 
+  const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+  const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
   if (request.method === 'OPTIONS') {
     // Handle CORS preflight request
     return new Response(null, {
@@ -22,20 +25,26 @@ Deno.serve(async (request: Request): Promise<Response> => {
       const requestData = await request.json();
       const { accountData, invoice, invoiceLines, client, bank } = requestData;
 
-      const pdfDoc = await renderLayout(invoice, invoiceLines, client, accountData, bank);
-      const pdfBytes = await pdfDoc.save();
-
       // Create a unique name for the PDF file
       const fileName = `${accountData.user_id}${invoice.invoice_number}.pdf`;
+      const fileUrl = `${SUPABASE_URL}/storage/v1/object/invoice-pdfs/${fileName}`;
 
-      const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
-      const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+      await fetch(fileUrl, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+          'apiKey': `${SUPABASE_SERVICE_ROLE_KEY}`
+        }
+      });
+
+      const pdfDoc = await renderLayout(invoice, invoiceLines, client, accountData, bank);
+      const pdfBytes = await pdfDoc.save();
 
       // Upload the PDF to Supabase Storage using fetch API
       const formData = new FormData();
       formData.append("file", new Blob([pdfBytes], { type: "application/pdf" }), fileName);
 
-      const storageData = await fetch(`${SUPABASE_URL}/storage/v1/object/invoice-pdfs/${fileName}`, {
+      const storageData = await fetch(fileUrl, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
