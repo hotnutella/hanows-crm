@@ -11,6 +11,7 @@ import { getIsGeneratingPdf, editInvoice } from '@/store/slices/messageSlice';
 import { AppDispatch, RootState } from '@/store';
 import Ribbon from './Ribbon';
 import { getAccessToken } from '@/store/slices/accountSlice';
+import { openConfirmInvoiceDialog } from '@/store/slices/dialogSlice';
 
 interface InvoiceMessageProps {
     invoice: Invoice;
@@ -50,6 +51,10 @@ const InvoiceMessage: React.FC<InvoiceMessageProps> = ({ invoice }) => {
         }));
     }
 
+    const handleConfirmClick = () => {
+        dispatch(openConfirmInvoiceDialog(invoice.id))
+    }
+
     return (
         <Stack direction="row-reverse" width="100%">
             <Paper className={className} onClick={handleInvoiceClick}>
@@ -79,7 +84,7 @@ const InvoiceMessage: React.FC<InvoiceMessageProps> = ({ invoice }) => {
                         </IconButton>
                     </Tooltip>
                     <Tooltip title="Confirm">
-                        <IconButton size="large">
+                        <IconButton size="large" onClick={handleConfirmClick}>
                             <CheckIcon />
                         </IconButton>
                     </Tooltip>

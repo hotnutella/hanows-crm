@@ -6,6 +6,7 @@ import { invoiceLinesApi } from './api/invoiceLinesApi';
 import clientSearchReducer from './slices/clientSearchSlice';
 import messageReducer from './slices/messageSlice';
 import accountReducer from './slices/accountSlice';
+import dialogReducer from './slices/dialogSlice';
 import { edgeApi } from './api/edgeApi';
 import { authApi } from './api/authApi';
 import { accountApi } from './api/accountApi';
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
     account: accountReducer,
     clientSearch: clientSearchReducer,
     message: messageReducer,
+    dialog: dialogReducer,
     [clientsApi.reducerPath]: clientsApi.reducer,
     [invoicesApi.reducerPath]: invoicesApi.reducer,
     [invoiceLinesApi.reducerPath]: invoiceLinesApi.reducer,
