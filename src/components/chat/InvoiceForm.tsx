@@ -86,17 +86,12 @@ const InvoiceForm: React.FC<InvoiceFormProps> = memo(function InvoiceForm({ clie
         }
 
         const savedInvoice = await saveInvoice(filteredLines);
-
-        console.log(savedInvoice)
-        console.log(filteredLines)
         if (!('data' in savedInvoice) || !savedInvoice.data?.id) {
             return;
         }
 
         const invoiceId = savedInvoice.data.id;
         const invoiceLines: InvoiceLine[] = [];
-
-        console.log(filteredLines)
 
         await Promise.all(Object.values(filteredLines).map(async (line) => {
             if (editingInvoiceId && line.id) {
